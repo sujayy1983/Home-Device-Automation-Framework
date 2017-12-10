@@ -65,65 +65,34 @@
 
 {% block content %}
 
+<font color="white"><h2>Home automation - Bose Soundtouch</h2></font>
+
 <div class="panel panel-default">
-    <div class="panel-heading">Home automation - Bose Soundtouch</div>
+    <div class="panel-heading"> Soundtouch controls</div>
     <div class="panel-body" >
-      <div class="container">
-          <h2>Internet radio - Preset channels</h2>          
-          <table class="table table-hover table-striped table-condensed table-responsive">
-            <thead>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                    <a class="btn" href="/bose/POWER">ON</a>
-                </td>
-                <td>
-                    <a class="btn" href="/bose/STOP">OFF</a>
-                </td>
-                <td>
-                    <a class="btn" href="/bose/AUX_INPUT">AUX</a>
-                </td>
-                <td>
-                    <a class="btn" href="/bose/MUTE">MUTE</a>
-                </td>
-                <td>
-                    <a class="btn" href="/bose/VOLUME_UP">Vol UP</a>
-                </td>
-                <td>
-                    <a class="btn" href="/bose/VOLUME_DOWN">Vol Down</a>
-                </td>
-              </tr>
-              <tr>
-                  <td>        
-                      <a class="btn" href="/bose/PRESET_1">Channel1</a>
-                  </td>
-                  <td>        
-                      <a class="btn" href="/bose/PRESET_2">Channel2</a>
-                  </td>
-                  <td>        
-                      <a class="btn" href="/bose/PRESET_3">Channel3</a>
-                  </td>
-                  <td>        
-                      <a class="btn" href="/bose/PRESET_4">Channel4</a>
-                  </td>
-                  <td>        
-                      <a class="btn" href="/bose/PRESET_5">Channel5</a>
-                  </td>
-                  <td>        
-                      <a class="btn" href="/bose/PRESET_6">Channel6</a>
-                  </td>
-              </tr>    
-              <tr>     
-                  <a class="btn" href="/bose/PRESETS">PRESETS</a>
-              </tr>
-            </tbody>
-          </table>
+        <div class="container">
+            <h4>Soundtouch basic controls</h4>
+            <div class="btn-group btn-group-justified">
+                <a class="btn" href="/bose/POWER">ON</a>
+                <a class="btn" href="/bose/STOP">OFF</a>
+                <a class="btn" href="/bose/AUX_INPUT">AUX</a>
+                <a class="btn" href="/bose/MUTE">MUTE</a>
+                <a class="btn" href="/bose/VOLUME_UP">Vol UP</a>
+                <a class="btn" href="/bose/VOLUME_DOWN">Vol Down</a>
+            </div>
         </div>
 
-        <br><br>
-        <p>{{display}}</p>
-
+        <div class="container">
+            <h4>Preset Internet radio - Channels</h4>
+            <div class="btn-group btn-group-justified">
+                <a class="btn" href="/bose/PRESET_1">Channel1</a>
+                <a class="btn" href="/bose/PRESET_2">Channel2</a>
+                <a class="btn" href="/bose/PRESET_3">Channel3</a>
+                <a class="btn" href="/bose/PRESET_4">Channel4</a>
+                <a class="btn" href="/bose/PRESET_5">Channel5</a>
+                <a class="btn" href="/bose/PRESET_6">Channel6</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
