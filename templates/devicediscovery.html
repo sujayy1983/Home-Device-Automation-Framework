@@ -1,0 +1,33 @@
+{% extends "basetemplate.html" %}
+
+{% block title %}Device discovery{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link href="/static/css/style5.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h2 align="center">Home network</h2>
+    <table class="table table-inverse" data-toggle="table" data-search="true" data-filter-control="true" data-show-export="true" data-click-to-select="true">
+        <thead>
+            <tr>
+            {% for column in columns %}
+                <th>{{column}}</th>
+            {% endfor %}
+                <th>More details</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for row in rows %}
+            <tr>
+            {% for column in columns %}
+                <td>{{row[column]}}</td>
+            {%endfor%}
+                <td><a href="/discovery/{{row['ip']}}">Details {{row['ip']}}</a></td>
+            </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,105 @@
+
+{% extends "basetemplate.html" %}
+{% block title %}Data analysis application{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link href="/static/css/style4.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h2 align="center">Data analysis - Web Application</h2>
+    <div class="panel panel-info">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h5 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Upload dataset(s)
+                </a>
+            </h5>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+            <form method="POST" enctype="multipart/form-data" action="/upload">
+                <input type="file" name="file[]" multiple="">
+                <input type="submit" value="upload dataset(s)">
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST">
+        <div class="container">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Data analysis - Primary selection options
+                </div>
+
+                <div class="panel-body">
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                            <select class="selectpicker show-tick" name="dataset">
+                            <optgroup label="Select a kaggle a dataset">
+                            {% for item in datasets %}
+                            {% if item.index == 0 %}
+                            <option value="{{item}}" selected>{{item}}</option>
+                            {% else %}
+                            <option value="{{item}}">{{item}}</option>
+                            {% endif %}
+                            {% endfor %}
+                                </optgroup>        
+                            </select>
+                            <button type="submit" formaction="/getcolumns" class="btn btn-info">Select</button>
+                        </div>
+
+                        <div class="col-xs-2">
+
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="rows" value="15" aria-describedby="basic-addon2">
+                                <span class="input-group-addon" id="basic-addon2">rows</span>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4">
+                            <select class="selectpicker show-tick multiple" name="column" title="Columns of selected dataset">
+                                <optgroup label="Select a column of {{dataset|default('selected', true)}} dataset">
+                                {% for item in columns %}
+                                    <option  value="{{item}}">{{item}}</option>
+                                {% endfor %}
+                                </optgroup>
+                            </select>
+
+                            <button type="submit" formaction="/filter/uniquelems" class="btn btn-info">quick look</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Filter options
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    <div class="panel-body">
+
+                        {% for filter in filters %}
+                        <div class="form-group">
+                            <label for="inputType" class="col-sm-2 control-label">{{filter}}</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="input" value={{filters[filter]}} placeholder="Input text">
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    @author: sujayyendhiren ramarao srinivasamurthi
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+

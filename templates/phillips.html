@@ -1,0 +1,108 @@
+
+{% extends "basetemplate.html" %}
+{% block title %}Phillips{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="/static/css/style3.css" />
+{% endblock %}
+
+{% block content %}
+    <h2 align="center" style="color:white;">Home automation - Phillips Hue</h2>
+    <div class="container">
+        <div class="panel panel-info">
+            
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h5 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseColor" aria-expanded="false" aria-controls="collapseLight">Phillips Hue light(s) contorl
+                    </a>
+                </h5>
+            </div>
+
+            <div id="collapseColor" class="panel-collapse collapse {{ hue.collapse|default('out', true) }}" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Hue ID</th>
+                                <th scope="col">Light name</th>
+                                <th scope="col">Current state</th>
+                                <th scope="col">Turn On/Off</th>
+                                <th scope="col">Model ID</th>
+                                <th scope="col">Sw Version</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for id in lights%}
+                            <tr>
+                                <th scope="row">{{id}}</th>
+                                <td>{{lights[id].name}}</td>
+                                <td><span class="label label-{{lights[id].color}}">{{lights[id].state}}</span></td>
+                                <td>
+                                    <a class="btn btn-success btn-circle" href="/phillips/{{id}}1">On</a>
+                                    <a class="btn btn-warning btn-circle" href="/phillips/{{id}}0">Off</a>
+                                </td>
+                                <td>{{lights[id].modelid}}</td>
+                                <td>{{lights[id].swversion}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <div class="row">
+                        <div class="alert alert-{{ hue.status|default('default', true) }} alert-dismissible" role="alert">
+                            <h4 class="alert-heading">{{hue.msghead}}</h4>
+                            {{hue.message}}
+                        </div> 
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel panel-info">
+                
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h5 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLight" aria-expanded="false" aria-controls="collapseLight">Phillips Hue light(s) - Color controls
+                    </a>
+                </h5>
+            </div>
+
+            <div id="collapseLight" class="panel-collapse collapse {{ hue.collapse|default('out', true) }}" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <form method="POST">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Hue ID</th>
+                                    <th scope="col">Light name</th>
+                                    <th scope="col">Hue state</th>
+                                    <th scope="col">Hue change</th>
+                                    <th scope="col">Apply choice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for id in lights%}
+                                <tr>
+                                    <th scope="row">{{id}}</th>
+                                    <td>{{lights[id].name}}</td>
+                                    <td><span class="label label-{{lights[id].color}}">{{lights[id].state}}</span></td>
+                                    <td>{{lights[id].modelid}}</td>
+                                    <td>
+                                        <a class="btn mini blue-stripe" href="/phillips/hue/edit">On</a>
+                                    </td>
+                                    
+                                    <td>{{lights[id].swversion}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+        </div>    
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+{% endblock %}

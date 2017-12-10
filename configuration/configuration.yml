@@ -1,0 +1,15 @@
+---
+
+HOME_NETWORK: "192.168.1.0/24"
+
+PHILLIPS:
+  username: "wBFC5TMhuJkeg7EH0BIpbOejQTmivI7tCw7NZYZi"
+  baseuri: "http://{phillipsbridgeip}/api/{username}/lights"
+
+BOSESOUNDTOUCH:
+  baseuri:  "http://{boseip}:8090/{option}" 
+  username: ""
+
+KAGGLEPROCESS:
+  username: ""
+  password: ""

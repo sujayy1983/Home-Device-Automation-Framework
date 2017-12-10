@@ -1,0 +1,11 @@
+output/*
+logs/*
+cache/*
+datasets/*
+.vscode/*
+.idea/*
+.ipynb_checkpoints/*
+library/__pycache__/*
+*.pyc
+library/*.pyc
+static/data/*

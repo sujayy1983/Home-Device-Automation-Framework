@@ -1,0 +1,173 @@
+{% extends "basetemplate.html" %}
+
+{% block title %}Home network - Discovery{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="/static/css/style6.css" />
+{% endblock %}
+
+{% block content %}
+<h2 align="center" style="color:white;">Home network - Discovery</h2>
+
+<style>
+    body {font-family: 'Architects Daughter', cursive;}
+</style>
+
+<style type="text/css">
+  div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 250px;          
+    height: 40px;
+    padding: 2px;       
+    font: 12px sans-serif;    
+    background: rgb(152, 203, 122); 
+    border: 2px;    
+    border-radius: 8px;     
+    pointer-events: none;     
+  }
+</style>
+
+<svg width="960" height="600" align="center"></svg>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet">
+
+<script>
+
+d3.select("body").style("background-color", d3.rgb(150,200,225))
+
+var svg = d3.select("svg")
+         .attr("style", "outline: thin solid black;");
+
+var  width = +svg.attr("width");
+var height = +svg.attr("height");
+var radius = 20;
+
+// Define the div for the tooltip
+let div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+
+var simulation = d3.forceSimulation()
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+d3.json("/static/data/graph.json", function(error, graph) {
+    if (error) throw error;
+                
+    //set up the simulation 
+    var simulation = d3.forceSimulation()
+    //add nodes
+    .nodes(graph.nodes);
+
+    //Setting the link strength to 0 neutralises the link distance 
+    //Result is that there's no inwards force to counteract the repulsive charge               
+    var link_force =  d3.forceLink(graph.links)
+        .id(function(d) { return d.id; })
+        .strength(0);
+
+    //have a low repulsive charge          
+    var charge_force = d3.forceManyBody()
+    .strength(-70);
+
+    var center_force = d3.forceCenter(width / 2, height / 2);  
+
+    simulation
+    .force("charge_force", charge_force)
+    .force("center_force", center_force)
+    .force("links",link_force);
+
+    //add tick instructions: 
+    simulation.on("tick", tickActions );
+
+    //draw lines for the links 
+    var link = svg.append("g")
+    .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+    .attr("stroke-width", 2)
+    .style("stroke", function(d) {return color(d.group);});         
+
+    //draw circles for the nodes 
+    var node = svg.append("g")
+    .attr("class", "nodes") 
+    .selectAll("circle")
+    .data(graph.nodes)
+    .enter()
+    .append("circle")
+    .attr("r", radius)
+    .attr("fill", function(d) {return color(d.group);})
+    .on("mouseover", function(d) {
+        div.transition()    
+            .duration(200)    
+            .style("opacity", .9);    
+        div .html( "Hostname " + d.name+ "<br/>IP " + d.id + "<br/>MAC " + d.mac)  
+            .style("left", (d3.event.pageX) + "px")   
+            .style("top", (d3.event.pageY - 28) + "px");  
+        })          
+    .on("mouseout", function(d) {   
+        div.transition()    
+        .duration(500)    
+        .style("opacity", 0); 
+    }); 
+
+    var label = svg.append("g")
+                .attr("class", "labels")
+                .selectAll("text")
+                .data(graph.nodes)
+                .enter().append("text")
+                .attr("class", "label")
+                .text(function(d) { return d.name; });
+
+    var drag_handler = d3.drag()
+        .on("start", drag_start)
+        .on("drag", drag_drag)
+        .on("end", drag_end);	
+
+    //same as u	sing .call on the node variable as in https://bl.ocks.org/mbostock/4062045 
+    drag_handler(node)
+
+    //d is the node 
+    function drag_start(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function drag_drag(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function drag_end(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+
+    function tickActions() {
+    //constrains the nodes to be within a box
+    node
+        .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+        .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+    
+    //simply tells one end of the line to follow one node around
+    //and the other end of the line to follow the other node around
+    link
+    .attr("x1", function(d) { return d.source.x; })
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
+    
+    label
+    	.attr("x", function(d) { return d.x; })
+        .attr("y", function (d) { return d.y; })
+        .style("font-size", "14px").style("fill", "#000000");
+    }
+}); 
+</script>
+
+{% endblock %}

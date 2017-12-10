@@ -1,0 +1,7 @@
+flask
+pandas
+PyYAML
+requests
+xmltodict
+python-nvd3
+python-nmap
