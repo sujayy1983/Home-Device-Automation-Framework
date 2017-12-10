@@ -57,6 +57,8 @@ docker run -d --name="HomeAutomation" -p 5000:5000 sujayy1983/homeautomation
 
 
 ### Issues
+- Container network and home network are different so issue discovering in
+  containerized version
 - No logging in the initial commit
 - Cached device info should be used more intelligently than now
 - Improvements in REST abstraction 
