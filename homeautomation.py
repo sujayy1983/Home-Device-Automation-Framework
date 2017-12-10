@@ -197,6 +197,12 @@ def d3display():
     return render_template('d3homedevices.html')
 
 
+@application.route('/appletv')
+def appletv():
+    """ Welcome screen with a list of datasets to choose from. """
+    return render_template('appletv.html')
+
+
 @application.route('/')
 def welcome():
     """ Welcome screen with a list of datasets to choose from. """
@@ -211,4 +217,4 @@ if __name__ == '__main__':
     for directory in ['output', 'cache', 'datasets', 'logs', 'static/data']:
         if not os.path.exists(directory): os.mkdir(directory)
 
-    application.run(threaded=True)
+    application.run(host="0.0.0.0", threaded=True)

@@ -47,7 +47,7 @@ class Utility(object):
     @staticmethod
     def create_tree():
         """ """
-        xbase = 150; ybase = 150; xrandmax = 350; yrandmax = 350
+        xbase = 150; ybase = 150; xrandmax = 350; yrandmax = 350; gw=None
         nm = nmap.PortScanner()
         homenw = Utility.read_configuration(config="HOME_NETWORK")
 

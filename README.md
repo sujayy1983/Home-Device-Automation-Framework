@@ -41,19 +41,23 @@ library requires 'sudo' permissions
     sudo python homeautomation.py
 ```
 
+### Docker implementation
+```
+docker build -t homeautomation .
+docker run -d --name="HomeAutomation" -p 5000:5000 sujayy1983/homeautomation
+```
+
 
 ### Future plans
-1. Isnt dockerized yet (planned soon)
-2. More organized and modular code
-2. More and more refinement
-3. More home automation devices shall be integrated here
-4. Voice activated controls (Leveraging google assistant) 
+1. More organized and modular code with more improvements
+2. More home automation devices shall be integrated here
+3. Voice activated controls (Leveraging google assistant) 
    or integration with AIY Google kit
-5. More detailed analysis of Kaggle datasets
+4. More detailed analysis of Kaggle datasets
 
 
 ### Issues
--  No logging in the initial commit
+- No logging in the initial commit
 - Cached device info should be used more intelligently than now
 - Improvements in REST abstraction 
 - Code assumes that ip address ending with '.1' is Gateway

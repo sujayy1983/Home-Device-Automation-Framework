@@ -1,0 +1,29 @@
+
+{% extends "basetemplate.html" %}
+{% block title %}Apple TV{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+{% endblock %}
+
+{% block content %}
+    <h2 align="center" style="color:white;">Home automation - Apple TV</h2>
+    <div class="container">
+        <div class="panel panel-info">
+            
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h5 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseColor" aria-expanded="false" aria-controls="collapseLight">
+                        Apple TV
+                    </a>
+                </h5>
+            </div>
+
+            <div id="collapseColor" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+{% endblock %}
