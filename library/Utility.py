@@ -53,7 +53,7 @@ class Utility(object):
 
         devices = defaultdict(list); cdevices = defaultdict(dict)
 
-        nm.scan(hosts=homenw, arguments='-sn') 
+        nm.scan(hosts=homenw, arguments='-sP')
         scanned = nm.all_hosts()
         
         for idx, host in enumerate(scanned, start=1):
