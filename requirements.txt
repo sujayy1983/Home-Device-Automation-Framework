@@ -5,3 +5,5 @@ requests
 xmltodict
 python-nvd3
 python-nmap
+scapy-python3
+netifaces

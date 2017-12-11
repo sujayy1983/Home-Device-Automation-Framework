@@ -6,11 +6,15 @@ Description: Reusable utilities across modules are placed here
 import json
 import nmap
 import random
+
+import socket
 import traceback
 from collections import defaultdict
 
 import yaml
 import requests
+
+from scapy.all import *
 
 
 class Utility(object):
@@ -45,7 +49,7 @@ class Utility(object):
 
 
     @staticmethod
-    def create_tree():
+    def create_tree_old():
         """ """
         xbase = 150; ybase = 150; xrandmax = 350; yrandmax = 350; gw=None
         nm = nmap.PortScanner()
@@ -57,8 +61,6 @@ class Utility(object):
         scanned = nm.all_hosts()
         
         for idx, host in enumerate(scanned, start=1):
-
-            print(json.dumps(nm[host], indent=4))
 
             macaddr  = nm[host]['addresses']['mac'] if 'mac' \
                         in nm[host]['addresses'] else ''
@@ -204,3 +206,51 @@ class Utility(object):
         print(response.text)
 
         return True
+
+
+    @staticmethod
+    #def create_scapy_tree():
+    def create_tree():
+        """ Faster network discovery with scapy """
+
+        devices = defaultdict(list); cdevices = defaultdict(dict)
+        xbase = 150; ybase = 150; xrandmax = 350; yrandmax = 350; gw=None
+
+        homenw = Utility.read_configuration(config="HOME_NETWORK")
+        alive, dead = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=homenw),\
+                                timeout=2, verbose=0)
+
+        for idx in range(0,len(alive)):
+
+            mac = None; ip = None; hostname = None
+
+            try:
+                hname, _a_, _b_ = socket.gethostbyaddr(alive[idx][1].psrc)
+                mac = alive[idx][1].hwsrc; ip  = alive[idx][1].psrc
+                hostname = hname.split(".")[0]
+            except:
+                mac = alive[idx][1].hwsrc; ip  = alive[idx][1].psrc
+                hostname = alive[idx][1].psrc
+            
+            devices["nodes"].append(
+                    {"name": hostname, 
+                       "id":  ip,
+                       "x" : xbase + random.randint(1,xrandmax),
+                       "y" : ybase + random.randint(1,yrandmax),
+                    "group": idx, "mac": mac
+                    })
+            
+            cdevices[hostname]['ip']  = ip; cdevices[hostname]['mac'] = mac
+
+            if not ip.endswith('.1'): 
+                devices["links"].append({"source":  "", "target":  ip})
+            else:
+                gw = ip
+
+        for link in devices["links"]:
+            link["source"]  = gw
+
+        with open("static/data/graph.json", 'w') as jswrt:
+            jswrt.write(json.dumps(devices, indent=4))
+
+        Utility.cache("devices", action="write", data=cdevices)

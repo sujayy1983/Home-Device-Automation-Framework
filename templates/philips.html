@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2 align="center" style="color:white;">Home automation - Phillips Hue</h2>
+    <h2 align="center" style="color:white;">Home automation - Philips Hue</h2>
     <div class="container">
         <div class="panel panel-info">
             
@@ -25,28 +25,28 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th scope="col">Hue ID</th>
-                                <th scope="col">Light name</th>
+                                <th scope="col" class="text-center">Hue ID</th>
+                                <th scope="col" class="text-center">Light name</th>
                                 <th scope="col" class="text-center">Current state</th>
                                 <th scope="col" class="text-center">Turn On/Off</th>
-                                <th scope="col">Model ID</th>
-                                <th scope="col">Sw Version</th>
+                                <th scope="col" class="text-center">Model ID</th>
+                                <th scope="col" class="text-center">Sw Version</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for id in lights%}
                             <tr>
-                                <th scope="row">{{id}}</th>
-                                <td>{{lights[id].name}}</td>
-                                <td><span class="label label-{{lights[id].color}}">{{lights[id].state}}</span></td>
+                                <td scope="row" class="text-center">{{id}}</td>
+                                <td class="text-center">{{lights[id].name}}</td>
+                                <td class="text-center"><span class="label label-{{lights[id].color}}">{{lights[id].state}}</span></td>
                                 <td width="30%" class="text-center">
                                     <div class="btn-group btn-group-justified">
                                         <a class="btn btn-success btn-circle" href="/philips/{{id}}1">On</a>
                                         <a class="btn btn-warning btn-circle" href="/philips/{{id}}0">Off</a>
                                     </div>
                                 </td>
-                                <td>{{lights[id].modelid}}</td>
-                                <td>{{lights[id].swversion}}</td>
+                                <td class="text-center">{{lights[id].modelid}}</td>
+                                <td class="text-center">{{lights[id].swversion}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -77,16 +77,16 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th scope="col">Hue ID</th>
-                                    <th scope="col">Light name</th>
+                                    <th scope="col" class="text-center">Hue ID</th>
+                                    <th scope="col" class="text-center">Light name</th>
                                     <th scope="col" class="text-center">Color option(s)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for id in lights%}
                                 <tr>
-                                    <th scope="row">{{id}}</th>
-                                    <td>{{lights[id].name}}</td>
+                                    <td scope="row" class="text-center">{{id}}</td>
+                                    <td class="text-center">{{lights[id].name}}</td>
                                     <td width="50%" class="text-center">
                                         <div class="btn-group btn-group-justified">
                                             <a class="btn btn-success btn-circle" href="/philips/{{id}}/25500">Green</a>

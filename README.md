@@ -7,9 +7,10 @@ Description: Home network automation WEB UI framework.
 ### What does this micro app offer ?
 
 1. Home network discovery and caching 
-   (i) D3Js Forcelayout visualization of discovered devices
+....(i) D3Js Forcelayout visualization of discovered devices. Hover mouse over any node to view
+       IP address and hostname of device.
        ![Discovered home network](/static/img/samplenw.png)
-   (ii) Caching of discovered info that can be leveraged by other parts of automation
+....(ii) Caching of discovered info that can be leveraged by other parts of automation
         Current logic leverages cached data by looking at hostname for key match.
 
 2. Basic Hue Light controls - Already configured lights are discovered and displayed on the UI
@@ -31,22 +32,25 @@ Description: Home network automation WEB UI framework.
 (ii) As we add more features we will cache data into the directory cache/*.cache
 
 
-### Run this application
+### Install and run this application
 
-For normal usage
-```
-    python homeautomation.py
-```
+Install and run this micro app 
 
-If we want more details like MAC address for discovered devices then 'python-nmap'
-library requires 'sudo' permissions
 ```
+    pip install -r requirements.txt
+    brew install libdnet
     sudo python homeautomation.py
 ```
 
 ### Docker implementation
+
+##### Build docker image
 ```
 docker build -t homeautomation .
+```
+
+##### Run docker container
+```
 docker run -d --name="HomeAutomation" -p 5000:5000 sujayy1983/homeautomation
 ```
 
