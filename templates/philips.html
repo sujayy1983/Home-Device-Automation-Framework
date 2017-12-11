@@ -79,6 +79,7 @@
                                 <tr>
                                     <th scope="col" class="text-center">Hue ID</th>
                                     <th scope="col" class="text-center">Light name</th>
+                                    <th scope="col" class="text-center">Brightness</th>
                                     <th scope="col" class="text-center">Color option(s)</th>
                                 </tr>
                             </thead>
@@ -87,13 +88,19 @@
                                 <tr>
                                     <td scope="row" class="text-center">{{id}}</td>
                                     <td class="text-center">{{lights[id].name}}</td>
-                                    <td width="50%" class="text-center">
+                                    <td width="15%" class="text-center">
                                         <div class="btn-group btn-group-justified">
-                                            <a class="btn btn-success btn-circle" href="/philips/{{id}}/25500">Green</a>
-                                            <a class="btn btn-warning btn-circle" href="/philips/{{id}}/10000">Orange</a>
-                                            <a class="btn btn-default btn-circle" href="/philips/{{id}}/18000">white</a>
-                                            <a class="btn btn-info btn-circle" href="/philips/{{id}}/46920">Blue</a>
-                                            <a class="btn btn-danger btn-circle" href="/philips/{{id}}/0">Red</a>
+                                            <a class="btn btn-default btn-circle" href="/philips/{{id}}/bri30">Low</a>
+                                            <a class="btn btn-default btn-circle" href="/philips/{{id}}/bri254">High</a>
+                                        </div>
+                                    </td>
+                                    <td width="40%" class="text-center">
+                                        <div class="btn-group btn-group-justified">
+                                            <a class="btn btn-success btn-circle" href="/philips/{{id}}/hue25500">Green</a>
+                                            <a class="btn btn-warning btn-circle" href="/philips/{{id}}/hue10000">Orange</a>
+                                            <a class="btn btn-default btn-circle" href="/philips/{{id}}/hue18000">white</a>
+                                            <a class="btn btn-info btn-circle" href="/philips/{{id}}/hue46920">Blue</a>
+                                            <a class="btn btn-danger btn-circle" href="/philips/{{id}}/hue0">Red</a>
                                         </div>
                                     </td>
                                 </tr>

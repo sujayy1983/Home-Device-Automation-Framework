@@ -152,7 +152,12 @@ def toggelelights(light=None, id=None, color=None):
         Utility.phillips_light_switch(int(light), hue)
 
     if color and id:
-        Utility.phillips_light_colors(id, int(color), hue)
+        if color.startswith('hue'):
+            color = color.replace("hue", '')
+            Utility.phillips_light_colors(id, int(color), hue)
+        elif color.startswith('bri'):
+            bri = color.replace("bri", '')
+            Utility.phillips_light_colors(id, 0, hue, bri=int(bri))
 
     lightsinfo = Utility.get_basic_info()
     return render_template('philips.html', lights=lightsinfo,\
