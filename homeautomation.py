@@ -132,8 +132,14 @@ def upload():
                 datasets=get_datasets(), columns=[])
 
 
-@application.route("/phillips", methods=['GET', "POST"])
-@application.route("/phillips/<light>", methods=['GET', "POST"])
+@application.route('/test')
+def test():
+    """ test a new feature  before standardizing as part of the tool. """
+    return render_template('test.html')
+
+
+@application.route("/philips", methods=['GET', "POST"])
+@application.route("/philips/<light>", methods=['GET', "POST"])
 def toggelelights(light=None):
     """ Phillips hue lights are controlled from here """
 
@@ -145,7 +151,7 @@ def toggelelights(light=None):
         Utility.phillips_light_switch(int(light), hue)
 
     lightsinfo = Utility.get_basic_info()
-    return render_template('phillips.html', lights=lightsinfo,\
+    return render_template('philips.html', lights=lightsinfo,\
                            hue=hue)
 
 
@@ -191,15 +197,21 @@ def device_description(ip):
 
 
 @application.route('/d3display')
-def d3display():
+@application.route('/d3display/<option>')
+def d3display(option=None):
     """ Welcome screen with a list of datasets to choose from. """
-    Utility.create_tree()
+    if not option:
+        Utility.create_tree()
     return render_template('d3homedevices.html')
 
 
 @application.route('/appletv')
-def appletv():
+@application.route('/appletv/<action>')
+def appletv(action=None):
     """ Welcome screen with a list of datasets to choose from. """
+    if action != None:
+        Utility.appletv_processing(action)
+        
     return render_template('appletv.html')
 
 

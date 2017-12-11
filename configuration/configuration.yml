@@ -10,6 +10,10 @@ BOSESOUNDTOUCH:
   baseuri:  "http://{boseip}:8090/{option}" 
   username: ""
 
+APPLETV:
+  baseuri: "http://{appletvip}/remoteAction={action}"
+  username: ""
+
 KAGGLEPROCESS:
   username: ""
   password: ""

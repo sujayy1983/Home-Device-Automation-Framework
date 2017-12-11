@@ -53,10 +53,13 @@ class Utility(object):
 
         devices = defaultdict(list); cdevices = defaultdict(dict)
 
-        nm.scan(hosts=homenw, arguments='-sP')
+        nm.scan(hosts=homenw, arguments='')
         scanned = nm.all_hosts()
         
         for idx, host in enumerate(scanned, start=1):
+
+            print(json.dumps(nm[host], indent=4))
+
             macaddr  = nm[host]['addresses']['mac'] if 'mac' \
                         in nm[host]['addresses'] else ''
             hostname = nm[host]['hostnames'][0]['name'].split(".")[0]
@@ -156,3 +159,31 @@ class Utility(object):
             hue['message'] = json.loads(response.text)[0]["success"]
         except:
             hue['message'] = response.text
+    
+    @staticmethod
+    def appletv_baseurl(action):
+        """ Apple TV baseurl """
+        appletvip = None; devices = Utility.cache("devices", "read")
+        
+        for device in devices:
+            if 'apple' in device.lower() and 'tv' in device.lower():
+                appletvip = devices[device]['ip']
+
+        config = Utility.read_configuration('APPLETV')
+
+        return config['baseuri'].format(action=action,\
+                                     appletvip=appletvip)
+
+
+    @staticmethod
+    def appletv_processing(action):
+
+        url = Utility.appletv_baseurl(action)
+
+        print("URL: {0}".format(url))
+        response = requests.put(url, data=json.dumps({}))
+
+        print(response.status_code)
+        print(response.text)
+
+        return True

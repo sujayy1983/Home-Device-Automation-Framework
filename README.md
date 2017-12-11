@@ -8,6 +8,7 @@ Description: Home network automation WEB UI framework.
 
 1. Home network discovery and caching 
    (i) D3Js Forcelayout visualization of discovered devices
+        ![Discovered home network](/static/img/samplenw.png)
    (ii) Caching of discovered info that can be leveraged by other parts of automation
         Current logic leverages cached data by looking at hostname for key match.
 
@@ -47,14 +48,12 @@ docker build -t homeautomation .
 docker run -d --name="HomeAutomation" -p 5000:5000 sujayy1983/homeautomation
 ```
 
-
 ### Future plans
 1. More organized and modular code with more improvements
 2. More home automation devices shall be integrated here
 3. Voice activated controls (Leveraging google assistant) 
    or integration with AIY Google kit
 4. More detailed analysis of Kaggle datasets
-
 
 ### Issues
 - Container network and home network are different so issue discovering in
