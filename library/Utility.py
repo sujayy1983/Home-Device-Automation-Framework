@@ -138,7 +138,7 @@ class Utility(object):
 
     @staticmethod
     def phillips_light_switch(toggle, hue):
-        """ Phillips light - Change switch """    
+        """ Phillips light - Toggle ON/OFF """    
         data = {"on": True}
         hue['msghead'] = "Request fulfilled"; hue["status"] = 'success'
 
@@ -160,6 +160,23 @@ class Utility(object):
         except:
             hue['message'] = response.text
     
+    @staticmethod
+    def phillips_light_colors(id, color, hue, bri=254, sat=254):
+        """ Phillips light - Change colors """    
+        data = {"on": True, 
+                "hue": color,
+                "bri": bri, 
+                sat: sat}
+
+        hue['msghead'] = "Request fulfilled"; hue["status"] = 'success'
+
+        baseurl = Utility.phillips_baseurl()
+        url = "{0}/{1}/state".format(baseurl, id)
+
+        print("URL: {0}".format(url))
+        response = requests.put(url, data=json.dumps(data))
+
+
     @staticmethod
     def appletv_baseurl(action):
         """ Apple TV baseurl """

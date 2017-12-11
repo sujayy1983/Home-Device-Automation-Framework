@@ -140,7 +140,8 @@ def test():
 
 @application.route("/philips", methods=['GET', "POST"])
 @application.route("/philips/<light>", methods=['GET', "POST"])
-def toggelelights(light=None):
+@application.route("/philips/<id>/<color>", methods=['GET', "POST"])
+def toggelelights(light=None, id=None, color=None):
     """ Phillips hue lights are controlled from here """
 
     hue= {}; hue['collapse'] = 'in'; 
@@ -149,6 +150,9 @@ def toggelelights(light=None):
     if light:
         print("Light: {0}".format(light))
         Utility.phillips_light_switch(int(light), hue)
+
+    if color and id:
+        Utility.phillips_light_colors(id, int(color), hue)
 
     lightsinfo = Utility.get_basic_info()
     return render_template('philips.html', lights=lightsinfo,\
