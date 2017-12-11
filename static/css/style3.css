@@ -1,20 +1,29 @@
-/*
-    DEMO STYLE
-*/
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 
+/*
+Thanks to:
+http://css-tricks.com/perfect-full-page-background-image
+
+Photo:
+http://www.publicdomainpictures.net/view-image.php?image=44399
+*/
+
 body { 
-    background: url('/static/img/phillips.jpg') no-repeat center center fixed;
+    background: url('/static/img/phillips.jpg') no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    font-family: 'Poppins', sans-serif;
-  }
+}
   
 .container{
   padding: 25px;   
-  }   
+}   
+
+.alert {
+    padding: 5px !important;
+    display: inline-block;
+}
 
 p {
     font-family: 'Poppins', sans-serif;
@@ -55,14 +64,13 @@ a, a:hover, a:focus {
 /* ---------------------------------------------------
     SIDEBAR STYLE
 ----------------------------------------------------- */
-.wrapper {
-    display: flex;
-    align-items: stretch;
-}
-
 #sidebar {
-    min-width: 250px;
-    max-width: 250px;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
@@ -137,27 +145,32 @@ ul.CTAs a {
     border-radius: 5px;
     margin-bottom: 5px;
 }
-
 a.download {
     background: #fff;
     color: #7386D5;
 }
-
 a.article, a.article:hover {
     background: #6d7fcc !important;
     color: #fff !important;
 }
 
 
-
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
 #content {
-    padding: 20px;
+    width: calc(100% - 250px);
+    padding: 40px;
     min-height: 100vh;
     transition: all 0.3s;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
+#content.active {
+    width: 100%;
+}
+
 
 /* ---------------------------------------------------
     MEDIAQUERIES
@@ -168,6 +181,12 @@ a.article, a.article:hover {
     }
     #sidebar.active {
         margin-left: 0;
+    }
+    #content {
+        width: 100%;
+    }
+    #content.active {
+        width: calc(100% - 250px);
     }
     #sidebarCollapse span {
         display: none;
