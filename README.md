@@ -8,13 +8,15 @@ Description: Home network automation WEB UI framework.
 
 1. Home network discovery and caching 
    (i) D3Js Forcelayout visualization of discovered devices
-        ![Discovered home network](/static/img/samplenw.png)
+       ![Discovered home network](/static/img/samplenw.png)
    (ii) Caching of discovered info that can be leveraged by other parts of automation
         Current logic leverages cached data by looking at hostname for key match.
 
 2. Basic Hue Light controls - Already configured lights are discovered and displayed on the UI
+   ![Philips Hue view](/static/img/samplehue.png)
 
 3. Bose Soundtouch - Device info display
+   ![BoseSoundtouch view](/static/img/samplebose.png)
 
 4. Initial analysis of Kaggle datasets
 
@@ -58,6 +60,7 @@ docker run -d --name="HomeAutomation" -p 5000:5000 sujayy1983/homeautomation
 ### Issues
 - Container network and home network are different so issue discovering in
   containerized version
+- Failure to discover an IP for BoseSoundtouch/Philips hue bridge results in page       crash corresponding page crash. Should display a message and exit gracefully. 
 - No logging in the initial commit
 - Cached device info should be used more intelligently than now
 - Improvements in REST abstraction 
