@@ -144,39 +144,46 @@ def test():
 def toggelelights(light=None, id=None, color=None):
     """ Phillips hue lights are controlled from here """
 
-    hue= {}; hue['collapse'] = 'in'; 
-    hue['msghead'] = "Click a button to select desired state"
+    try:
+        hue= {}; hue['collapse'] = 'in'; 
+        hue['msghead'] = "Click a button to select desired state"
 
-    if light:
-        print("Light: {0}".format(light))
-        Utility.phillips_light_switch(int(light), hue)
+        if light:
+            print("Light: {0}".format(light))
+            Utility.phillips_light_switch(int(light), hue)
 
-    if color and id:
-        if color.startswith('hue'):
-            color = color.replace("hue", '')
-            Utility.phillips_light_colors(id, int(color), hue)
-        elif color.startswith('bri'):
-            bri = color.replace("bri", '')
-            Utility.phillips_light_colors(id, 0, hue, bri=int(bri))
+        if color and id:
+            if color.startswith('hue'):
+                color = color.replace("hue", '')
+                Utility.phillips_light_colors(id, int(color), hue)
+            elif color.startswith('bri'):
+                bri = color.replace("bri", '')
+                Utility.phillips_light_colors(id, 0, hue, bri=int(bri))
 
-    lightsinfo = Utility.get_basic_info()
-    return render_template('philips.html', lights=lightsinfo,\
-                           hue=hue)
+        lightsinfo = Utility.get_basic_info()
+        return render_template('philips.html', lights=lightsinfo,\
+                            hue=hue)
+    except:
+        return render_template('failure.html', message="Phillips hue detection failed")
 
 
 @application.route('/bosesoundtouch')
 @application.route('/bose/<key>')
 def bosesoundtouch(key=None):
     """ Welcome screen with a list of datasets to choose from. """
-    if key != None:
 
-        if key == 'PRESETS':
-            bose.check_presets(key)
-        else:
-            bose.change_key_attr(key)
+    try:
+        if key != None:
 
-    return render_template('bosesoundtouch.html', \
-            display=json.dumps(bose.get_bose_info(), indent=4))
+            if key == 'PRESETS':
+                bose.check_presets(key)
+            else:
+                bose.change_key_attr(key)
+
+        return render_template('bosesoundtouch.html', \
+                display=json.dumps(bose.get_bose_info(), indent=4))
+    except:
+        return render_template('failure.html', message="Soundtouch detection failed")
 
 
 @application.route('/datanalysis')
@@ -208,9 +215,14 @@ def device_description(ip):
 @application.route('/d3display')
 @application.route('/d3display/<option>')
 def d3display(option=None):
-    """ Welcome screen with a list of datasets to choose from. """
-    if not option:
-        Utility.create_tree()
+    """ Discover home network """
+
+    try:
+        if not option:
+            Utility.create_tree()
+    except:
+        return render_template('failure.html', message="Home network discovery failure")
+
     return render_template('d3homedevices.html')
 
 
@@ -218,10 +230,44 @@ def d3display(option=None):
 @application.route('/appletv/<action>')
 def appletv(action=None):
     """ Welcome screen with a list of datasets to choose from. """
-    if action != None:
-        Utility.appletv_processing(action)
+
+    try:
+        if action != None:
+            Utility.appletv_processing(action)
+    except:
+        return render_template('failure.html', message="Apple TV feature yet to be developed")
         
     return render_template('appletv.html')
+
+
+@application.route('/osdetection')
+@application.route('/osdetection/<ipaddr>')
+def osdetection(ipaddr=None):
+    try:
+        osdata = {}; columns = None
+
+        if ipaddr:
+            ipaddr = [(ipaddr, None)]
+        else:
+            ipaddr = []
+            cache = Utility.cache('devices', 'read')
+
+            for hostname in cache:
+                ipaddr.append((cache[hostname]['ip'], hostname))
+        
+        for ip, hostname in ipaddr:
+            data, dtype = Utility.os_detection(ip, hostname)
+
+            if dtype == 'type2':
+                osdata[hostname] = data
+
+                if columns == None:
+                    columns = data.keys()
+
+        return render_template('ostable.html', osdata=osdata, columns=columns)
+    
+    except:
+        return render_template('failure.html', message="OS detection failed")
 
 
 @application.route('/')

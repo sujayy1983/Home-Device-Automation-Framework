@@ -49,57 +49,45 @@ class Utility(object):
 
 
     @staticmethod
-    def create_tree_old():
-        """ """
-        xbase = 150; ybase = 150; xrandmax = 350; yrandmax = 350; gw=None
+    def os_detection(ipaddr, hostname=None):
+        """ Detect OS of a device """
+
         nm = nmap.PortScanner()
-        homenw = Utility.read_configuration(config="HOME_NETWORK")
-
-        devices = defaultdict(list); cdevices = defaultdict(dict)
-
-        nm.scan(hosts=homenw, arguments='')
-        scanned = nm.all_hosts()
+        nm.scan(hosts=ipaddr, arguments='-O')
+        nm.all_hosts()
         
-        for idx, host in enumerate(scanned, start=1):
+        print('-'*70)
+        print("Ipaddr: {} Hostname: {}".format(ipaddr, hostname))
+        print('-'*70)
+        if 'osclass' in nm[ipaddr] :
+            for osclass in nm[ipaddr]['osclass']:
+                print('OsClass.type : {0}'.format(osclass['type']))
+                print('OsClass.vendor : {0}'.format(osclass['vendor']))
+                print('OsClass.osfamily : {0}'.format(osclass['osfamily']))
+                print('OsClass.osgen : {0}'.format(osclass['osgen']))
+                print('OsClass.accuracy : {0}'.format(osclass['accuracy']))
+                print('-'*70)
+                return osclass, 'type1'
 
-            macaddr  = nm[host]['addresses']['mac'] if 'mac' \
-                        in nm[host]['addresses'] else ''
-            hostname = nm[host]['hostnames'][0]['name'].split(".")[0]
-            xrand = random.randint(1,xrandmax)
-            yrand = random.randint(1,yrandmax)
+        if 'osmatch' in nm[ipaddr]:
+            for osmatch in nm[ipaddr]['osmatch']:
+                print('osmatch.name : {0}'.format(osmatch['name']))
+                print('osmatch.accuracy : {0}'.format(osmatch['accuracy']))
+                print('osmatch.line : {0}'.format(osmatch['line']))
+                print('-'*70)
+                return osmatch, 'type2'
 
-            if host.endswith('.1'):
-                gw = host 
-                xrand = (150 + xrandmax)/2
-                yrand = (150 + yrandmax)/2
+        if 'fingerprint' in nm[ipaddr]:
+            print('Fingerprint : {0}'.format(nm[ipaddr]['fingerprint']))
+            print('-'*70)
+            return nm[ipaddr]['fingerprint'], 'type3'
 
-            devices["nodes"].append({"name": hostname, 
-                                    "id":  host,
-                                    "x":xbase + xrand , 
-                                    "y": ybase + yrand,
-                                    "group": idx, "mac": macaddr
-                                    })
-
-            if len(hostname) == 0: hostname = host
-
-            cdevices[hostname]['ip']  = host
-            cdevices[hostname]['mac'] = macaddr
-
-            if host != gw: 
-                devices["links"].append({"source":  "", "target":  host})
         
-        if gw != None:
-            for link in devices["links"]:
-                link["source"]  = gw
-
-        with open("static/data/graph.json", 'w') as jswrt:
-            jswrt.write(json.dumps(devices, indent=4))
-
-        Utility.cache("devices", action="write", data=cdevices)
 
 
     @staticmethod
     def phillips_baseurl():
+        """ Format baseurl for Phillips Hue bridge """
         huebridgeip = None; devices = Utility.cache("devices", "read")
         
         for device in devices:

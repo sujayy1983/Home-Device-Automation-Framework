@@ -1,0 +1,42 @@
+{% extends "basetemplate.html" %}
+
+{% block title %}Home network - Details{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link href="/static/css/style4.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h2 align="center">Home network - OS detection</h2>
+
+    <div class="container">
+        <div class="panel panel-info">
+            <div class="panel-heading">Os detection</div>
+                <div class="panel-body">
+
+                <table class="table table-inverse" data-toggle="table" data-search="true" data-filter-control="true" data-show-export="true" data-click-to-select="true">
+                    <thead>
+                        <tr>
+                        {% for column in columns %}
+                            <th>{{column}}</th>
+                        {% endfor %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                      {% for hostname in osdata %}
+                        <tr>
+                            <td>{{hostname}}</td>
+                            {% for cell in osdata[hostname]%}
+                            <td>{{osdata[hostname][cell]}}</td>
+                            {%endfor%}
+                        </tr>
+                      {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">@author: sujayyendhiren ramarao srinivasamurthi</div>
+        </div>
+    </div>
+{% endblock %}

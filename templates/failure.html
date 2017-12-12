@@ -1,0 +1,14 @@
+{% extends "basetemplate.html" %}
+{% block title %}Failure{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link href="/static/css/style4.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<p>Home automation - Failure</p>
+<div class="alert alert-danger" role="alert">
+    <strong>Oh snap!</strong> {{message}}
+</div>
+{% endblock %}

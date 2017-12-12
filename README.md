@@ -19,12 +19,14 @@ Description: Home network automation WEB UI framework.
 3. Bose Soundtouch - Device info display
    ![BoseSoundtouch view](/static/img/samplebose.png)
 
-4. Initial analysis of Kaggle datasets
+4. Os detection of discovered devices
+
+5. Initial analysis of Kaggle datasets
 
 
 ### What does this tool leverage
 1. Python 3.6 (Tested on MAC)
-2. Flask + jinja2 + html + bootstrap + D3js
+2. Flask + jinja2 + html + bootstrap + D3js + nmap + scapy
 
 
 ### Configuring this micro app
@@ -42,6 +44,27 @@ Install and run this micro app
     sudo python homeautomation.py
 ```
 
+### Future plans
+1. More organized and modular code with more improvements
+2. More home automation devices shall be integrated here
+3. Voice activated controls (Leveraging google assistant) 
+   or integration with AIY Google kit
+4. More detailed analysis of Kaggle datasets
+
+
+### Issues
+- Container network and home network are different so issue discovering in
+  containerized version
+- Failure to discover an IP for BoseSoundtouch/Philips hue bridge results in page crash corresponding page crash. Should display a message and exit gracefully. 
+- No logging in the initial commit
+- Cached device info should be used more intelligently than now
+- Need to parallelize OS detection for faster response
+- Improvements in REST abstraction 
+- Code assumes that ip address ending with '.1' is Gateway
+- Lots of code restructing shall be done soon and comply with coding standards
+
+
+
 ### Docker implementation
 
 ##### Build docker image
@@ -53,23 +76,6 @@ docker build -t homeautomation .
 ```
 docker run -d --name="HomeAutomation" -p 5000:5000 sujayy1983/homeautomation
 ```
-
-### Future plans
-1. More organized and modular code with more improvements
-2. More home automation devices shall be integrated here
-3. Voice activated controls (Leveraging google assistant) 
-   or integration with AIY Google kit
-4. More detailed analysis of Kaggle datasets
-
-### Issues
-- Container network and home network are different so issue discovering in
-  containerized version
-- Failure to discover an IP for BoseSoundtouch/Philips hue bridge results in page       crash corresponding page crash. Should display a message and exit gracefully. 
-- No logging in the initial commit
-- Cached device info should be used more intelligently than now
-- Improvements in REST abstraction 
-- Code assumes that ip address ending with '.1' is Gateway
-- Lots of code restructing shall be done soon and comply with coding standards
 
 ### Report issues and suggestions
 - Contact: sujayy1983@gmail.com
