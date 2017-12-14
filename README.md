@@ -20,8 +20,14 @@ Description: Home network automation WEB UI framework.
    ![BoseSoundtouch view](/static/img/samplebose.png)
 
 4. Os detection of discovered devices
+   Note: Few entries are intentionally removed for security reasons.
+   ![OS detection of home devices](/static/img/sampleosdetect.png)
 
-5. Initial analysis of Kaggle datasets
+5. Initial analysis of Kaggle labelled datasets
+   This tells us maximum occurrences per column
+   Step1: Upload a csv dataset using upload options.
+   Step2: Select a dataset and select top occurrence count in rows.
+   TBD
 
 
 ### What does this tool leverage

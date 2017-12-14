@@ -10,12 +10,12 @@ import traceback
 from glob import glob
 
 import nmap
-import flask
-
-from   flask import Flask, render_template, request
 import pandas as pd
-from werkzeug.utils import secure_filename
 from nvd3 import multiBarChart
+from multiprocessing import Pool 
+from   flask import Flask, render_template, request
+from werkzeug.utils import secure_filename
+
 
 import library.bose as bose
 from library.Utility import Utility
@@ -255,14 +255,16 @@ def osdetection(ipaddr=None):
             for hostname in cache:
                 ipaddr.append((cache[hostname]['ip'], hostname))
         
-        for ip, hostname in ipaddr:
-            data, dtype = Utility.os_detection(ip, hostname)
+        pool = Pool(processes=len(ipaddr))
+        result = pool.map(Utility.os_detection, ipaddr)
+        pool.close() 
+        pool.join()
 
-            if dtype == 'type2':
-                osdata[hostname] = data
+        for hostname, osname, _ in result:
+            osdata[hostname] = osname
 
-                if columns == None:
-                    columns = data.keys()
+            if columns == None:
+                columns = osname.keys()
 
         return render_template('ostable.html', osdata=osdata, columns=columns)
     

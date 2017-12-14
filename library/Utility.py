@@ -49,8 +49,10 @@ class Utility(object):
 
 
     @staticmethod
-    def os_detection(ipaddr, hostname=None):
+    def os_detection(iphost):
         """ Detect OS of a device """
+
+        ipaddr, hostname = iphost
 
         nm = nmap.PortScanner()
         nm.scan(hosts=ipaddr, arguments='-O')
@@ -59,6 +61,7 @@ class Utility(object):
         print('-'*70)
         print("Ipaddr: {} Hostname: {}".format(ipaddr, hostname))
         print('-'*70)
+
         if 'osclass' in nm[ipaddr] :
             for osclass in nm[ipaddr]['osclass']:
                 print('OsClass.type : {0}'.format(osclass['type']))
@@ -67,7 +70,7 @@ class Utility(object):
                 print('OsClass.osgen : {0}'.format(osclass['osgen']))
                 print('OsClass.accuracy : {0}'.format(osclass['accuracy']))
                 print('-'*70)
-                return osclass, 'type1'
+                return (hostname, osclass, 'type1')
 
         if 'osmatch' in nm[ipaddr]:
             for osmatch in nm[ipaddr]['osmatch']:
@@ -75,14 +78,12 @@ class Utility(object):
                 print('osmatch.accuracy : {0}'.format(osmatch['accuracy']))
                 print('osmatch.line : {0}'.format(osmatch['line']))
                 print('-'*70)
-                return osmatch, 'type2'
+                return (ipaddr, osmatch, 'type2')
 
         if 'fingerprint' in nm[ipaddr]:
             print('Fingerprint : {0}'.format(nm[ipaddr]['fingerprint']))
             print('-'*70)
-            return nm[ipaddr]['fingerprint'], 'type3'
-
-        
+            return (ipaddr, nm[ipaddr]['fingerprint'], 'type3')
 
 
     @staticmethod
