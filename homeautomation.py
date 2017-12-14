@@ -10,10 +10,11 @@ import traceback
 from glob import glob
 
 import nmap
+import flask
 import pandas as pd
 from nvd3 import multiBarChart
-from multiprocessing import Pool 
-from   flask import Flask, render_template, request
+from multiprocessing import Pool
+from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 
 
