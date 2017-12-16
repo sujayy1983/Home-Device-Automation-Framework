@@ -4,10 +4,6 @@
 
 {% block head %}
   {{ super() }}
-  <meta http-equiv="cache-control" content="no-cache"> 
-  <meta http-equiv="expires" content="0"> 
-  <meta http-equiv="pragma" content="no-cache">
-  
   <link rel="stylesheet" href="/static/css/style6.css" />
 {% endblock %}
 
@@ -40,7 +36,7 @@
 
 <script>
 
-d3.select("body").style("background-color", d3.rgb(150,200,225))
+d3.select("body").style("background-color", d3.rgb(245, 245, 220))
 
 var svg = d3.select("svg")
          .attr("style", "outline: thin solid black;");

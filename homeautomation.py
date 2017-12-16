@@ -136,7 +136,7 @@ def upload():
 @application.route('/test')
 def test():
     """ test a new feature  before standardizing as part of the tool. """
-    return render_template('test.html')
+    return render_template('philipsdendrogram.html')
 
 
 @application.route("/philips", methods=['GET', "POST"])

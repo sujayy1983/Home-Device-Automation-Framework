@@ -78,12 +78,12 @@ class Utility(object):
                 print('osmatch.accuracy : {0}'.format(osmatch['accuracy']))
                 print('osmatch.line : {0}'.format(osmatch['line']))
                 print('-'*70)
-                return (ipaddr, osmatch, 'type2')
+                return (hostname, osmatch, 'type2')
 
         if 'fingerprint' in nm[ipaddr]:
             print('Fingerprint : {0}'.format(nm[ipaddr]['fingerprint']))
             print('-'*70)
-            return (ipaddr, nm[ipaddr]['fingerprint'], 'type3')
+            return (hostname, nm[ipaddr]['fingerprint'], 'type3')
 
 
     @staticmethod
