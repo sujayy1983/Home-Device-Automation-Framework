@@ -56,7 +56,7 @@ d3.json("/static/data/philips.json", function(error, treeData) {
     if (error) throw error;
 
     var i = 0,
-    duration = 750,
+    duration = 700,
     root;
 
     // declares a tree layout and assigns the size
@@ -100,7 +100,8 @@ d3.json("/static/data/philips.json", function(error, treeData) {
         .data(nodes, function(d) {return d.id || (d.id = ++i); });
 
     // Enter any new modes at the parent's previous position.
-    var nodeEnter = node.enter().append('g')
+    var nodeEnter = node.enter()
+        .append('g')
         .attr('class', 'node')
         .attr("transform", function(d) {
             return "translate(" + source.y0 + "," + source.x0 + ")";
@@ -115,6 +116,8 @@ d3.json("/static/data/philips.json", function(error, treeData) {
 
     // Add labels for the nodes
     nodeEnter.append('text')
+    .append('a')
+        .attr("xlink:href", function(d){return d.data.href;})
         .attr("dy", ".35em")
         .attr("x", function(d) {
             return d.children || d._children ? -13 : 13;
@@ -141,8 +144,9 @@ d3.json("/static/data/philips.json", function(error, treeData) {
         .style("fill", function(d) {
             return d.data.color;
         })
-        .attr('cursor', 'pointer');
-
+        .attr('cursor', 'pointer')
+        .append('a')
+        .attr("xlink:href", function(d){return d.data.href;});
 
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()

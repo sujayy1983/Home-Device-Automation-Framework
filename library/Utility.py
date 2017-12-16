@@ -29,7 +29,6 @@ class Utility(object):
             else:
                 return yaml.load(read.read())
 
-
     @staticmethod
     def cache(filename="default", action="read", data=None):
         """ Cache network data and others that can be reused """
@@ -46,7 +45,6 @@ class Utility(object):
                 return True
         
         return False
-
 
     @staticmethod
     def os_detection(iphost):
@@ -85,89 +83,6 @@ class Utility(object):
             print('-'*70)
             return (hostname, nm[ipaddr]['fingerprint'], 'type3')
 
-
-    @staticmethod
-    def phillips_baseurl():
-        """ Format baseurl for Phillips Hue bridge """
-        huebridgeip = None; devices = Utility.cache("devices", "read")
-        
-        for device in devices:
-            if 'hue' in device.lower() and 'philips' in device.lower():
-                huebridgeip = devices[device]['ip']
-
-        config = Utility.read_configuration('PHILLIPS')
-
-        username = config['username']
-        return config['baseuri'].format(username=username,\
-                            phillipsbridgeip=huebridgeip)
-
-
-    @staticmethod
-    def get_basic_info():
-        """ Get info about lights """
-        url = Utility.phillips_baseurl()
-
-        print("Phillips info URL: {0}".format(url))
-        lightinfo = defaultdict(dict)
-        response = requests.get(url, data=json.dumps({}))
-        jdata = json.loads(response.text)
-
-        for id in jdata:
-            print("ID: {0}".format(id))
-            lightinfo[id]["state"] = jdata[id]["state"]["on"]
-            lightinfo[id]["name"] = jdata[id]["name"]
-            lightinfo[id]["modelid"] = jdata[id]["modelid"]
-            lightinfo[id]["swversion"] = jdata[id]["swversion"] 
-
-            if jdata[id]["state"]["on"] == True:
-                lightinfo[id]["color"] = 'success'
-            else:
-                lightinfo[id]["color"] = 'warning'
-
-        return lightinfo
-
-
-    @staticmethod
-    def phillips_light_switch(toggle, hue):
-        """ Phillips light - Toggle ON/OFF """    
-        data = {"on": True}
-        hue['msghead'] = "Request fulfilled"; hue["status"] = 'success'
-
-        baseurl = Utility.phillips_baseurl()
-        url = "{0}/{1}/state".format(baseurl, int(toggle/10))
-
-        if toggle & 0x1 != 0x1:
-            data["on"] = False
-
-        print("URL: {0}".format(url))
-        response = requests.put(url, data=json.dumps(data))
-
-        if response.status_code != 200:
-            hue['msghead'] = "Failure"
-            hue['status']  = 'danger'
-
-        try:
-            hue['message'] = json.loads(response.text)[0]["success"]
-        except:
-            hue['message'] = response.text
-    
-    @staticmethod
-    def phillips_light_colors(id, color, hue, bri=254, sat=254):
-        """ Phillips light - Change colors """    
-        data = {"on": True, 
-                "hue": color,
-                "bri": bri, 
-                sat: sat}
-
-        hue['msghead'] = "Request fulfilled"; hue["status"] = 'success'
-
-        baseurl = Utility.phillips_baseurl()
-        url = "{0}/{1}/state".format(baseurl, id)
-
-        print("URL: {0}".format(url))
-        response = requests.put(url, data=json.dumps(data))
-
-
     @staticmethod
     def appletv_baseurl(action):
         """ Apple TV baseurl """
@@ -182,7 +97,6 @@ class Utility(object):
         return config['baseuri'].format(action=action,\
                                      appletvip=appletvip)
 
-
     @staticmethod
     def appletv_processing(action):
 
@@ -195,7 +109,6 @@ class Utility(object):
         print(response.text)
 
         return True
-
 
     @staticmethod
     #def create_scapy_tree():

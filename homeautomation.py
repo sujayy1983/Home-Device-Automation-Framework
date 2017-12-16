@@ -6,7 +6,6 @@
 import os
 import json
 import traceback
-
 from glob import glob
 
 import nmap
@@ -17,11 +16,9 @@ from multiprocessing import Pool
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 
-
 import library.bose as bose
+from library.philips import Philips
 from library.Utility import Utility
-
-
 
 DATASET = "datasets/{0}"
 UPLOAD_FOLDER = 'datasets'
@@ -143,7 +140,7 @@ def test():
 @application.route("/philips/<light>", methods=['GET', "POST"])
 @application.route("/philips/<id>/<color>", methods=['GET', "POST"])
 def toggelelights(light=None, id=None, color=None):
-    """ Phillips hue lights are controlled from here """
+    """ Philips hue lights are controlled from here """
 
     try:
         hue= {}; hue['collapse'] = 'in'; 
@@ -151,19 +148,19 @@ def toggelelights(light=None, id=None, color=None):
 
         if light:
             print("Light: {0}".format(light))
-            Utility.phillips_light_switch(int(light), hue)
+            Philips.philips_light_switch(int(light), hue)
 
         if color and id:
             if color.startswith('hue'):
                 color = color.replace("hue", '')
-                Utility.phillips_light_colors(id, int(color), hue)
+                Philips.philips_light_colors(id, int(color), hue)
             elif color.startswith('bri'):
                 bri = color.replace("bri", '')
-                Utility.phillips_light_colors(id, 0, hue, bri=int(bri))
+                Philips.philips_light_colors(id, 0, hue, bri=int(bri))
 
-        lightsinfo = Utility.get_basic_info()
-        return render_template('philips.html', lights=lightsinfo,\
-                            hue=hue)
+        lightsinfo = Philips.get_basic_info()
+        return render_template('philipsdendrogram.html')
+
     except:
         return render_template('failure.html', message="Phillips hue detection failed")
 
