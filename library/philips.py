@@ -4,16 +4,21 @@ Description: Philips light controls are implemented here
 """
 
 import json
-import requests
-
 from collections import defaultdict
+
+import requests
 from library.Utility import Utility
 
+
 class Philips(object):
-    
+    """ Light class"""
+
+    __HUEBRIDGE__ = None
+
     def __init__(self):
+        """ Initialization if required """
         pass
-    
+
     @staticmethod
     def get_basic_info():
         """ Get info about lights """
@@ -25,11 +30,10 @@ class Philips(object):
         jdata = json.loads(response.text)
 
         for devid in jdata:
-            print("ID: {0}".format(devid))
             lightinfo[devid]["state"] = jdata[devid]["state"]["on"]
             lightinfo[devid]["name"] = jdata[devid]["name"]
             lightinfo[devid]["modelid"] = jdata[devid]["modelid"]
-            lightinfo[devid]["swversion"] = jdata[devid]["swversion"] 
+            lightinfo[devid]["swversion"] = jdata[devid]["swversion"]
 
             if jdata[devid]["state"]["on"] is True:
                 lightinfo[devid]["color"] = 'success'
@@ -41,28 +45,25 @@ class Philips(object):
     @staticmethod
     def philips_baseurl():
         """ Format baseurl for Phillips Hue bridge """
-        huebridgeip = None; devices = Utility.cache("devices", "read")
-        
+        devices = Utility.cache("devices", "read")
         for device in devices:
             if 'hue' in device.lower() and 'philips' in device.lower():
-                huebridgeip = devices[device]['ip']
+                Philips.__HUEBRIDGE__ = devices[device]['ip']
 
         config = Utility.read_configuration('PHILLIPS')
 
         username = config['username']
+        
         return config['baseuri'].format(username=username,\
-                            phillipsbridgeip=huebridgeip)
+                            phillipsbridgeip=Philips.__HUEBRIDGE__)
 
     @staticmethod
-    def philips_light_colors(devid, color, hue, bri=254, sat=254):
-        """ Philips light - Change colors """    
-        data = {"on": True, 
-                "hue": color,
-                "bri": bri, 
-                "sat": sat}
+    def philips_light_colors(devid, hue, color=None, bri=254, sat=254):
+        """ Philips light - Change colors """
+        data = {"on": True, "bri": bri, "sat": sat}
+        if color: data["hue"] = color
 
         hue['msghead'] = "Request fulfilled"; hue["status"] = 'success'
-
         baseurl = Philips.philips_baseurl()
         url = "{0}/{1}/state".format(baseurl, devid)
 
@@ -71,7 +72,7 @@ class Philips(object):
 
     @staticmethod
     def philips_light_switch(toggle, hue):
-        """ Philips light - Toggle ON/OFF """    
+        """ Philips light - Toggle ON/OFF """
         data = {"on": True}
         hue['msghead'] = "Request fulfilled"; hue["status"] = 'success'
 
@@ -86,9 +87,33 @@ class Philips(object):
 
         if response.status_code != 200:
             hue['msghead'] = "Failure"
-            hue['status']  = 'danger'
+            hue['status'] = 'danger'
 
         try:
             hue['message'] = json.loads(response.text)[0]["success"]
         except:
             hue['message'] = response.text
+
+    @staticmethod
+    def create_dendrogram_input():
+        """ Build initial dendrogram json file"""
+        url = Philips.philips_baseurl()
+
+        response = requests.get(url, data=json.dumps({}))
+        jdata = json.loads(response.text)
+
+        with open('static/data/light.template', 'r') as template:
+            strtmpldata = template.read()
+
+        fintree = {"name": "Bridge - " + Philips.__HUEBRIDGE__,
+                   "href": "#",
+                   "color": "black",
+                   "children": []}
+
+        for devid in jdata:
+            print("Device ID - {} Name: {}".format(devid, json.dumps(jdata[devid], indent=4)))
+            data = strtmpldata.replace("LIGHTNAME", jdata[devid]["name"]).replace('ID',devid)
+            fintree["children"].append(json.loads(data))
+
+        with open('static/data/philips.json', 'w') as ligtree:
+            ligtree.write(json.dumps(fintree, indent=4))

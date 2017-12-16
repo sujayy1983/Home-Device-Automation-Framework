@@ -7,13 +7,12 @@ import os
 import json
 import traceback
 from glob import glob
+from multiprocessing import Pool
 
-import nmap
 import flask
+from flask import Flask, render_template, request
 import pandas as pd
 from nvd3 import multiBarChart
-from multiprocessing import Pool
-from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 
 import library.bose as bose
@@ -122,7 +121,7 @@ def upload():
         uploaded_files = flask.request.files.getlist("file[]")
 
         for afile in uploaded_files:
-            if not afile.filename.endswith('.csv'): 
+            if not afile.filename.endswith('.csv'):
                 continue
             afile.save(os.path.join(application.config['UPLOAD_FOLDER'],\
                                     secure_filename(afile.filename)))
@@ -138,30 +137,32 @@ def test():
 
 @application.route("/philips", methods=['GET', "POST"])
 @application.route("/philips/<light>", methods=['GET', "POST"])
-@application.route("/philips/<id>/<color>", methods=['GET', "POST"])
-def toggelelights(light=None, id=None, color=None):
+@application.route("/philips/<devid>/<color>", methods=['GET', "POST"])
+def toggelelights(light=None, devid=None, color=None):
     """ Philips hue lights are controlled from here """
 
     try:
-        hue= {}; hue['collapse'] = 'in'; 
+        hue = {}; hue['collapse'] = 'in'
         hue['msghead'] = "Click a button to select desired state"
-
+        
+        Philips.create_dendrogram_input()
+        
         if light:
             print("Light: {0}".format(light))
             Philips.philips_light_switch(int(light), hue)
 
-        if color and id:
+        if color and devid:
             if color.startswith('hue'):
                 color = color.replace("hue", '')
-                Philips.philips_light_colors(id, int(color), hue)
+                Philips.philips_light_colors(devid, hue, color=int(color))
             elif color.startswith('bri'):
                 bri = color.replace("bri", '')
-                Philips.philips_light_colors(id, 0, hue, bri=int(bri))
+                Philips.philips_light_colors(devid, hue, bri=int(bri))
 
-        lightsinfo = Philips.get_basic_info()
         return render_template('philipsdendrogram.html')
 
     except:
+        print(traceback.format_exc())
         return render_template('failure.html', message="Phillips hue detection failed")
 
 
@@ -192,29 +193,10 @@ def view_datasets():
                             key=lambda s: s.lower()), columns=[])
 
 
-@application.route('/discovery/<ip>')
-def device_description(ip):
-    """ Discover all the devices in home network """
-
-    devices = []
-    nm = nmap.PortScanner()
-    nm.scan(hosts=ip, arguments='-O') 
-    scanned = nm.all_hosts()
-
-    for host in scanned:
-        print(json.dumps(nm[host], indent=4))
-        devices.append({'ip': host})
-
-    return render_template('devicediscovery.html',\
-                            columns=['ip'],\
-                            rows=devices)
-
-
 @application.route('/d3display')
 @application.route('/d3display/<option>')
 def d3display(option=None):
     """ Discover home network """
-
     try:
         if not option:
             Utility.create_tree()
@@ -228,19 +210,18 @@ def d3display(option=None):
 @application.route('/appletv/<action>')
 def appletv(action=None):
     """ Welcome screen with a list of datasets to choose from. """
-
     try:
         if action != None:
             Utility.appletv_processing(action)
     except:
         return render_template('failure.html', message="Apple TV feature yet to be developed")
-        
     return render_template('appletv.html')
 
 
 @application.route('/osdetection')
 @application.route('/osdetection/<ipaddr>')
 def osdetection(ipaddr=None):
+    """ OS detection is performed here """
     try:
         osdata = {}; columns = None
 
@@ -252,20 +233,19 @@ def osdetection(ipaddr=None):
 
             for hostname in cache:
                 ipaddr.append((cache[hostname]['ip'], hostname))
-        
+
         pool = Pool(processes=len(ipaddr))
         result = pool.map(Utility.os_detection, ipaddr)
-        pool.close() 
+        pool.close()
         pool.join()
 
         for hostname, osname, _ in result:
             osdata[hostname] = osname
 
-            if columns == None:
+            if not columns:
                 columns = osname.keys()
 
         return render_template('ostable.html', osdata=osdata, columns=columns)
-    
     except:
         return render_template('failure.html', message="OS detection failed")
 
@@ -282,6 +262,6 @@ if __name__ == '__main__':
     # Initialization #
     #----------------#
     for directory in ['output', 'cache', 'datasets', 'logs', 'static/data']:
-        if not os.path.exists(directory): os.mkdir(directory)
-
+        if not os.path.exists(directory):
+            os.mkdir(directory)
     application.run(host="0.0.0.0", threaded=True)
