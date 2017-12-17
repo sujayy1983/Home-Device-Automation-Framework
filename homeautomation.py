@@ -135,7 +135,7 @@ def upload():
 @application.route('/test')
 def test():
     """ test a new feature  before standardizing as part of the tool. """
-    return render_template('philipsdendrogram.html')
+    return render_template('welcome.html')
 
 
 @application.route("/philips", methods=['GET', "POST"])
@@ -278,4 +278,4 @@ if __name__ == '__main__':
     for directory in ['output', 'cache', 'datasets', 'logs', 'static/data']:
         if not os.path.exists(directory):
             os.mkdir(directory)
-    application.run(host="0.0.0.0", threaded=True)
+    application.run(host="0.0.0.0", processes=8)
