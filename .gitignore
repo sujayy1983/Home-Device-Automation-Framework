@@ -8,4 +8,4 @@ datasets/*
 library/__pycache__/*
 *.pyc
 library/*.pyc
-static/data/*
+static/data/*.json

@@ -1,0 +1,38 @@
+{
+    "name": "LIGHTNAME",
+    "color": "black",
+    "href": "#",
+    "children": [
+        { 
+            "name": "Power controls",
+            "color": "red",
+            "href": "#",
+            "children": [
+                { "name": "Power on",  "href": "/philips/ID1", "color": "green"},
+                { "name": "Power off", "href": "/philips/ID0", "color": "orange"}
+            ]
+        },
+        {
+            "name": "Brightness",
+            "color": "white",
+            "href": "#",
+            "children": [
+                { "name": "Maximum", "href": "/philips/ID/bri254", "color": "white"},
+                { "name": "Medium",  "href": "/philips/ID/bri140", "color": "bisque"},
+                { "name": "Minimum", "href": "/philips/ID/bri40",  "color": "beige"}
+            ]
+        },
+        {
+            "name": "Color",
+            "color": "yellow",
+            "href": "#",
+            "children": [
+                { "name": "Green",  "href": "/philips/ID/hue25000", "color": "green"},
+                { "name": "Blue",   "href": "/philips/ID/hue46920", "color": "blue"},
+                { "name": "Yellow", "href": "/philips/ID/hue12750", "color": "yellow"},
+                { "name": "Red",    "href": "/philips/ID/hue0",     "color": "red"},
+                { "name": "White",  "href": "/philips/ID/hue18000", "color": "white"}
+            ]
+        }
+    ]
+}
