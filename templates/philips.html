@@ -1,117 +1,230 @@
-
 {% extends "basetemplate.html" %}
-{% block title %}Philips{% endblock %}
+
+{% block title %}Philips lights{% endblock %}
 
 {% block head %}
-    {{ super() }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css" />
-    <link rel="stylesheet" href="/static/css/style3.css" />
+  {{ super() }}
+  <link rel="stylesheet" href="/static/css/style3.css" />
 {% endblock %}
 
 {% block content %}
-    <h2 align="center" style="color:white;">Home automation - Philips Hue</h2>
-    <div class="container">
-        <div class="panel panel-info">
-            
-            <div class="panel-heading" role="tab" id="headingOne">
-                <h5 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseColor" aria-expanded="false" aria-controls="collapseLight">Philips Hue light(s) contorl
-                    </a>
-                </h5>
-            </div>
+<h2 align="center" style="color:black;">Philips - Hue light controls</h2>
 
-            <div id="collapseColor" class="panel-collapse collapse {{ hue.collapse|default('out', true) }}" role="tabpanel" aria-labelledby="headingOne">
-                <div class="panel-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="text-center">Hue ID</th>
-                                <th scope="col" class="text-center">Light name</th>
-                                <th scope="col" class="text-center">Current state</th>
-                                <th scope="col" class="text-center">Turn On/Off</th>
-                                <th scope="col" class="text-center">Model ID</th>
-                                <th scope="col" class="text-center">Sw Version</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for id in lights%}
-                            <tr>
-                                <td scope="row" class="text-center">{{id}}</td>
-                                <td class="text-center">{{lights[id].name}}</td>
-                                <td class="text-center"><span class="label label-{{lights[id].color}}">{{lights[id].state}}</span></td>
-                                <td width="15%" class="text-center">
-                                    <div class="btn-group btn-group-justified">
-                                        <a class="btn btn-success btn-circle" href="/philips/{{id}}1">On</a>
-                                        <a class="btn btn-warning btn-circle" href="/philips/{{id}}0">Off</a>
-                                    </div>
-                                </td>
-                                <td class="text-center">{{lights[id].modelid}}</td>
-                                <td class="text-center">{{lights[id].swversion}}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+<style>
+    body {font-family: 'Architects Daughter', cursive;}
+</style>
 
-                    <div class="row">
-                        <div class="alert alert-{{ hue.status|default('default', true) }} alert-dismissible" role="alert">
-                            <h4 class="alert-heading">{{hue.msghead}}</h4>
-                            {{hue.message}}
-                        </div> 
-                    </div>
-                </div>
-            </div>
+<style type="text/css">
+  div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 250px;          
+    height: 40px;
+    padding: 2px;       
+    font: 12px sans-serif;    
+    background: rgb(152, 203, 122); 
+    border: 2px;    
+    border-radius: 8px;     
+    pointer-events: none;     
+  }
+</style>
 
-        </div>
-        <div class="panel panel-info">
-                
-            <div class="panel-heading" role="tab" id="headingOne">
-                <h5 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLight" aria-expanded="false" aria-controls="collapseLight">Phillips Hue light(s) - Color controls
-                    </a>
-                </h5>
-            </div>
+<svg width="960" height="500" align="center"></svg>
 
-            <div id="collapseLight" class="panel-collapse collapse {{ hue.collapse|default('out', true) }}" role="tabpanel" aria-labelledby="headingOne">
-                <div class="panel-body">
-                    <form method="POST">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="text-center">Hue ID</th>
-                                    <th scope="col" class="text-center">Light name</th>
-                                    <th scope="col" class="text-center">Brightness</th>
-                                    <th scope="col" class="text-center">Color option(s)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for id in lights%}
-                                <tr>
-                                    <td scope="row" class="text-center">{{id}}</td>
-                                    <td class="text-center">{{lights[id].name}}</td>
-                                    <td width="15%" class="text-center">
-                                        <div class="btn-group btn-group-justified">
-                                            <a class="btn btn-default btn-circle" href="/philips/{{id}}/bri30">Low</a>
-                                            <a class="btn btn-default btn-circle" href="/philips/{{id}}/bri254">High</a>
-                                        </div>
-                                    </td>
-                                    <td width="40%" class="text-center">
-                                        <div class="btn-group btn-group-justified">
-                                            <a class="btn btn-success btn-circle" href="/philips/{{id}}/hue25500">Green</a>
-                                            <a class="btn btn-warning btn-circle" href="/philips/{{id}}/hue10000">Orange</a>
-                                            <a class="btn btn-default btn-circle" href="/philips/{{id}}/hue18000">white</a>
-                                            <a class="btn btn-info btn-circle" href="/philips/{{id}}/hue46920">Blue</a>
-                                            <a class="btn btn-danger btn-circle" href="/philips/{{id}}/hue0">Red</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </form>
-                </div>
-            </div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet">
 
-        </div>    
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+<script>
+
+// Set the dimensions and margins of the diagram
+var margin = {top: 25, right: 120, bottom: 25, left: 125},
+    width = 1100 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
+var radius = 15;
+
+var svg = d3.select("svg")
+            .attr("width", width + margin.right + margin.left)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("style", "outline: thin solid black;")
+            .style("opacity", 3.0)
+            .style("fill", "#f46d43")
+            .append("g")
+            .attr("transform", "translate("
+                + margin.left + "," + margin.top + ")");
+
+d3.json("/static/data/philips.json", function(error, treeData) {
+    if (error) throw error;
+
+    var i = 0,
+    duration = 700,
+    root;
+
+    // declares a tree layout and assigns the size
+    var treemap = d3.tree().size([height, width]);
+
+    // Assigns parent, children, height, depth
+    root = d3.hierarchy(treeData, function(d) { return d.children; });
+    root.x0 = height / 2;
+    root.y0 = 0;
+
+    // Collapse after the second level
+    root.children.forEach(collapse);
+
+    update(root);
+
+    // Collapse the node and all it's children
+    function collapse(d) {
+        if(d.children) {
+            d._children = d.children
+            d._children.forEach(collapse)
+            d.children = null
+        }
+    }
+
+    function update(source) {
+
+    // Assigns the x and y position for the nodes
+    var treeData = treemap(root);
+
+    // Compute the new tree layout.
+    var nodes = treeData.descendants(),
+        links = treeData.descendants().slice(1);
+
+    // Normalize for fixed-depth.
+    nodes.forEach(function(d){ d.y = d.depth * 180});
+
+    // ****************** Nodes section ***************************
+
+    // Update the nodes...
+    var node = svg.selectAll('g.node')
+        .data(nodes, function(d) {return d.id || (d.id = ++i); });
+
+    // Enter any new modes at the parent's previous position.
+    var nodeEnter = node.enter()
+        .append('g')
+        .attr('class', 'node')
+        .attr("transform", function(d) {
+            return "translate(" + source.y0 + "," + source.x0 + ")";
+        })
+        .on('click', click);
+
+    // Add Circle for the nodes
+    nodeEnter.append('circle')
+        .attr('class', 'node')
+        .attr('r', 1e-6)
+        .style("fill", "white");
+
+    // Add labels for the nodes
+    nodeEnter.append('text')
+    .append('a')
+        .attr("xlink:href", function(d){return d.data.href;})
+        .attr("dy", ".35em")
+        .attr("x", function(d) {
+            return d.children || d._children ? -13 : 13;
+        })
+        .attr("text-anchor", function(d) {
+            return d.children || d._children ? "end" : "start";
+        })
+        .text(function(d) { return d.data.name; })
+        .style("fill", "white");
+
+    // UPDATE
+    var nodeUpdate = nodeEnter.merge(node);
+
+    // Transition to the proper position for the node
+    nodeUpdate.transition()
+        .duration(duration)
+        .attr("transform", function(d) { 
+            return "translate(" + d.y + "," + d.x + ")";
+        });
+
+    // Update the node attributes and style
+    nodeUpdate.select('circle.node')
+        .attr('r', radius)
+        .style("fill", function(d) {
+            return d.data.color;
+        })
+        .attr('cursor', 'pointer')
+        .append('a')
+        .attr("xlink:href", function(d){return d.data.href;});
+
+    // Remove any exiting nodes
+    var nodeExit = node.exit().transition()
+        .duration(duration)
+        .attr("transform", function(d) {
+            return "translate(" + source.y + "," + source.x + ")";
+        })
+        .remove();
+
+    // On exit reduce the node circles size to 0
+    nodeExit.select('circle')
+        .attr('r', 1e-6);
+
+    // On exit reduce the opacity of text labels
+    nodeExit.select('text')
+        .style('fill-opacity', 1e-6);
+
+    // ****************** links section ***************************
+
+    // Update the links...
+    var link = svg.selectAll('path.link')
+        .data(links, function(d) { return d.id; });
+
+    // Enter any new links at the parent's previous position.
+    var linkEnter = link.enter().insert('path', "g")
+        .attr("class", "link")
+        .attr('d', function(d){
+            var o = {x: source.x0, y: source.y0}
+            return diagonal(o, o)
+        });
+
+    // UPDATE
+    var linkUpdate = linkEnter.merge(link);
+
+    // Transition back to the parent element position
+    linkUpdate.transition()
+        .duration(duration)
+        .attr('d', function(d){ return diagonal(d, d.parent) });
+
+    // Remove any exiting links
+    var linkExit = link.exit().transition()
+        .duration(duration)
+        .attr('d', function(d) {
+            var o = {x: source.x, y: source.y}
+            return diagonal(o, o)
+        })
+        .remove();
+
+    // Store the old positions for transition.
+    nodes.forEach(function(d){
+        d.x0 = d.x;
+        d.y0 = d.y;
+    });
+
+    // Creates a curved (diagonal) path from parent to the child nodes
+    function diagonal(s, d) {
+
+        path = `M ${s.y} ${s.x}
+                C ${(s.y + d.y) / 2} ${s.x},
+                ${(s.y + d.y) / 2} ${d.x},
+                ${d.y} ${d.x}`
+
+        return path
+    }
+
+    // Toggle children on click.
+    function click(d) {
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        } else {
+            d.children = d._children;
+            d._children = null;
+        }
+        update(d);
+    }
+    }
+
+}); 
+</script>
 {% endblock %}

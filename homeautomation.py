@@ -58,6 +58,8 @@ def get_unique_columnelems(dataset, column, head=15):
         analyze.reset_index(inplace=True)
         analyze.columns = [column, 'OccurrenceCnt']
         return analyze
+    except OSError as err:
+        print("OS error: {0}".format(err))
     except:
         print(traceback.format_exc())
         return None
@@ -91,7 +93,8 @@ def filter_columns(options=None):
             formatted = result.values.tolist()
             return render_template('displaystats.html',\
                     columns=result.keys(), rows=formatted, barchart=barchart)
-
+        except OSError as err:
+            print("OS error: {0}".format(err))
         except:
             print(traceback.format_exc())
 
@@ -142,11 +145,12 @@ def toggelelights(light=None, devid=None, color=None):
     """ Philips hue lights are controlled from here """
 
     try:
-        hue = {}; hue['collapse'] = 'in'
+        hue = {}
+        hue['collapse'] = 'in'
         hue['msghead'] = "Click a button to select desired state"
-        
+
         Philips.create_dendrogram_input()
-        
+
         if light:
             print("Light: {0}".format(light))
             Philips.philips_light_switch(int(light), hue)
@@ -159,8 +163,9 @@ def toggelelights(light=None, devid=None, color=None):
                 bri = color.replace("bri", '')
                 Philips.philips_light_colors(devid, hue, bri=int(bri))
 
-        return render_template('philipsdendrogram.html')
-
+        return render_template('philips.html')
+    except OSError as err:
+        print("OS error: {0}".format(err))
     except:
         print(traceback.format_exc())
         return render_template('failure.html', message="Phillips hue detection failed")
@@ -181,6 +186,8 @@ def bosesoundtouch(key=None):
 
         return render_template('bosesoundtouch.html', \
                 display=json.dumps(bose.get_bose_info(), indent=4))
+    except OSError as err:
+        print("OS error: {0}".format(err))
     except:
         return render_template('failure.html', message="Soundtouch detection failed")
 
@@ -200,6 +207,8 @@ def d3display(option=None):
     try:
         if not option:
             Utility.create_tree()
+    except OSError as err:
+        print("OS error: {0}".format(err))
     except:
         return render_template('failure.html', message="Home network discovery failure")
 
@@ -213,6 +222,8 @@ def appletv(action=None):
     try:
         if action != None:
             Utility.appletv_processing(action)
+    except OSError as err:
+        print("OS error: {0}".format(err))
     except:
         return render_template('failure.html', message="Apple TV feature yet to be developed")
     return render_template('appletv.html')
@@ -223,7 +234,8 @@ def appletv(action=None):
 def osdetection(ipaddr=None):
     """ OS detection is performed here """
     try:
-        osdata = {}; columns = None
+        osdata = {}
+        columns = None
 
         if ipaddr:
             ipaddr = [(ipaddr, None)]
@@ -246,6 +258,8 @@ def osdetection(ipaddr=None):
                 columns = osname.keys()
 
         return render_template('ostable.html', osdata=osdata, columns=columns)
+    except OSError as err:
+        print("OS error: {0}".format(err))
     except:
         return render_template('failure.html', message="OS detection failed")
 

@@ -31,7 +31,7 @@ Description: Home network automation WEB UI framework.
 
 
 ### What does this tool leverage
-1. Python 3.6 (Tested on MAC)
+1. Python 3.6 (Tested on MAC and testing in progress on Raspberry Pi3)
 2. Flask + jinja2 + html + bootstrap + D3js + nmap + scapy
 
 
@@ -42,11 +42,20 @@ Description: Home network automation WEB UI framework.
 
 ### Install and run this application
 
-Install and run this micro app 
+##### MAC - Install and run this micro app 
 
 ```
+    Open Terminal
     pip install -r requirements.txt
     brew install libdnet
+    sudo python homeautomation.py
+```
+
+##### Raspberry Pi - 3
+```
+    Open Terminal
+    sudo apt-get install python-pandas libdnet
+    sudo pip install -r requirements.txt
     sudo python homeautomation.py
 ```
 
