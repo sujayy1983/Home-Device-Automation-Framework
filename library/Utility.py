@@ -49,15 +49,15 @@ class Utility(object):
 
         ipaddr, hostname = iphost
 
-        nm = nmap.PortScanner()
-        nm.scan(hosts=ipaddr, arguments='-O')
-        nm.all_hosts()
+        pscan = nmap.PortScanner()
+        pscan.scan(hosts=ipaddr, arguments='-O')
+        pscan.all_hosts()
         print('-'*70)
         print("Ipaddr: {} Hostname: {}".format(ipaddr, hostname))
         print('-'*70)
 
-        if 'osclass' in nm[ipaddr]:
-            for osclass in nm[ipaddr]['osclass']:
+        if 'osclass' in pscan[ipaddr]:
+            for osclass in pscan[ipaddr]['osclass']:
                 print('OsClass.type : {0}'.format(osclass['type']))
                 print('OsClass.vendor : {0}'.format(osclass['vendor']))
                 print('OsClass.osfamily : {0}'.format(osclass['osfamily']))
@@ -66,18 +66,18 @@ class Utility(object):
                 print('-'*70)
                 return (hostname, osclass, 'type1')
 
-        if 'osmatch' in nm[ipaddr]:
-            for osmatch in nm[ipaddr]['osmatch']:
+        if 'osmatch' in pscan[ipaddr]:
+            for osmatch in pscan[ipaddr]['osmatch']:
                 print('osmatch.name : {0}'.format(osmatch['name']))
                 print('osmatch.accuracy : {0}'.format(osmatch['accuracy']))
                 print('osmatch.line : {0}'.format(osmatch['line']))
                 print('-'*70)
                 return (hostname, osmatch, 'type2')
 
-        if 'fingerprint' in nm[ipaddr]:
-            print('Fingerprint : {0}'.format(nm[ipaddr]['fingerprint']))
+        if 'fingerprint' in pscan[ipaddr]:
+            print('Fingerprint : {0}'.format(pscan[ipaddr]['fingerprint']))
             print('-'*70)
-            return (hostname, nm[ipaddr]['fingerprint'], 'type3')
+            return (hostname, pscan[ipaddr]['fingerprint'], 'type3')
 
     @staticmethod
     def appletv_baseurl(action):
@@ -110,20 +110,24 @@ class Utility(object):
     @staticmethod
     def create_tree():
         """ Faster network discovery with scapy """
+        xbase = 150
+        ybase = 150
+        xrandmax = 350
+        yrandmax = 350
         gatewway = None
         devices = defaultdict(list)
         cdevices = defaultdict(dict)
-        xbase = 150; ybase = 150; xrandmax = 350; yrandmax = 350
+
         homenw = Utility.read_configuration(config="HOME_NETWORK")
-        alive, dead = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=homenw),\
+        alive, _ = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=homenw),\
                                 timeout=2, verbose=0)
 
-        for idx in range(0,len(alive)):
+        for idx in range(0, len(alive)):
 
             mac = None; ipaddr = None; hostname = None
 
             try:
-                hname, _a_, _b_ = socket.gethostbyaddr(alive[idx][1].psrc)
+                hname, _, _ = socket.gethostbyaddr(alive[idx][1].psrc)
                 mac = alive[idx][1].hwsrc
                 ipaddr = alive[idx][1].psrc
                 hostname = hname.split(".")[0]
@@ -132,8 +136,8 @@ class Utility(object):
                 hostname = alive[idx][1].psrc
 
             devices["nodes"].append({"name": hostname, "id": ipaddr,\
-                "x" : xbase + random.randint(1,xrandmax),
-                "y" : ybase + random.randint(1,yrandmax),
+                "x" : xbase + random.randint(1, xrandmax),\
+                "y" : ybase + random.randint(1, yrandmax),\
                 "group": idx, "mac": mac})
 
             cdevices[hostname]['ip'] = ipaddr

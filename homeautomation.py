@@ -264,6 +264,12 @@ def osdetection(ipaddr=None):
         return render_template('failure.html', message="OS detection failed")
 
 
+@application.route('/voicekit')
+def googlekit():
+    """ Google AIY kit """
+    return render_template('aiyvoicekit.html')
+
+
 @application.route('/')
 def welcome():
     """ Welcome screen with a list of datasets to choose from. """

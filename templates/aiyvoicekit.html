@@ -4,11 +4,11 @@
 
 {% block head %}
   {{ super() }}
-  <link rel="stylesheet" href="/static/css/philips.css" />
+  <link rel="stylesheet" href="/static/css/aiy.css" />
 {% endblock %}
 
 {% block content %}
-<h2 align="center" style="color:black;">Philips - Hue light controls</h2>
+<h2 align="center" style="color:black;">Google AIY kit</h2>
 
 <style>
     body {font-family: 'Architects Daughter', cursive;}
@@ -46,13 +46,13 @@ var svg = d3.select("svg")
             .attr("width", width + margin.right + margin.left)
             .attr("height", height + margin.top + margin.bottom)
             .attr("style", "outline: thin solid black;")
-            .style("opacity", 1.0)
+            .style("opacity", 3.0)
             .style("fill", "#000000")
             .append("g")
             .attr("transform", "translate("
                 + margin.left + "," + margin.top + ")");
 
-d3.json("/static/data/philips.json", function(error, treeData) {
+d3.json("/static/data/aiy.json", function(error, treeData) {
     if (error) throw error;
 
     var i = 0,
