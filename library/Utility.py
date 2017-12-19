@@ -43,8 +43,7 @@ class Utility(object):
                 return True
         return False
 
-    @staticmethod
-    def os_detection(iphost):
+    def os_detection(self, iphost):
         """ Detect OS of a device """
 
         ipaddr, hostname = iphost

@@ -31,7 +31,7 @@ Description: Home network automation WEB UI framework.
 
 
 ### What does this tool leverage
-1. Python 3.6 (Tested on MAC and testing in progress on Raspberry Pi3)
+1. Tested on MAC with Python 3.6 and Python3.4 on Raspberry Pi3.
 2. Flask + jinja2 + html + bootstrap + D3js + nmap + scapy
 
 
@@ -70,14 +70,11 @@ Description: Home network automation WEB UI framework.
 ### Issues
 - Container network and home network are different so issue discovering in
   containerized version
-- Failure to discover an IP for BoseSoundtouch/Philips hue bridge results in page crash corresponding page crash. Should display a message and exit gracefully. 
 - No logging in the initial commit
 - Cached device info should be used more intelligently than now
-- Need to parallelize OS detection for faster response
 - Improvements in REST abstraction 
 - Code assumes that ip address ending with '.1' is Gateway
 - Lots of code restructing shall be done soon and comply with coding standards
-
 
 
 ### Docker implementation

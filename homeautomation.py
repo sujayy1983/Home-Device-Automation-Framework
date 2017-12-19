@@ -250,8 +250,10 @@ def osdetection(ipaddr=None):
             for hostname in cache:
                 ipaddr.append((cache[hostname]['ip'], hostname))
 
+        osdetect = Utility()
+
         pool = Pool(processes=len(ipaddr))
-        result = pool.map(Utility.os_detection, ipaddr)
+        result = pool.map(osdetect.os_detection, ipaddr)
         pool.close()
         pool.join()
 
@@ -265,6 +267,7 @@ def osdetection(ipaddr=None):
     except OSError as err:
         print("OS error: {0}".format(err))
     except:
+        print(traceback.format_exc())
         return render_template('failure.html', message="OS detection failed")
 
 

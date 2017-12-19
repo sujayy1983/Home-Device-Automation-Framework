@@ -9,3 +9,4 @@ library/__pycache__/*
 *.pyc
 library/*.pyc
 static/data/*.json
+nohup.out
