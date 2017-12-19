@@ -113,7 +113,12 @@ class Philips(object):
         for devid in jdata:
             print("Device ID - {} Name: {}".format(devid, json.dumps(jdata[devid], indent=4)))
             data = strtmpldata.replace("LIGHTNAME", jdata[devid]["name"]).replace('ID',devid)
-            fintree["children"].append(json.loads(data))
+            jsdata = json.loads(data)
+
+            if jdata[devid]["type"] == "Dimmable light":
+                jsdata["children"] = jsdata["children"][0:2]
+
+            fintree["children"].append(jsdata)
 
         with open('static/data/philips.json', 'w') as ligtree:
             ligtree.write(json.dumps(fintree, indent=4))

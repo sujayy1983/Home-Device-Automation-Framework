@@ -15,7 +15,7 @@ import pandas as pd
 from nvd3 import multiBarChart
 from werkzeug.utils import secure_filename
 
-import library.bose as bose
+from library.bose import Bose
 from library.philips import Philips
 from library.Utility import Utility
 
@@ -180,15 +180,18 @@ def bosesoundtouch(key=None):
         if key != None:
 
             if key == 'PRESETS':
-                bose.check_presets(key)
+                Bose.check_presets()
             else:
-                bose.change_key_attr(key)
+                Bose.change_key_attr(key)
 
         return render_template('bosesoundtouch.html', \
-                display=json.dumps(bose.get_bose_info(), indent=4))
+                display=json.dumps(Bose.get_bose_info(), indent=4),\
+                bosehostname=Bose.__HOSTNAME__,\
+                boseip=Bose.__IP__)
     except OSError as err:
         print("OS error: {0}".format(err))
     except:
+        print(traceback.format_exc())
         return render_template('failure.html', message="Soundtouch detection failed")
 
 
@@ -210,6 +213,7 @@ def d3display(option=None):
     except OSError as err:
         print("OS error: {0}".format(err))
     except:
+        print(traceback.format_exc())
         return render_template('failure.html', message="Home network discovery failure")
 
     return render_template('d3homedevices.html')

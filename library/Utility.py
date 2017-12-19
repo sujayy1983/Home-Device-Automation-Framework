@@ -110,10 +110,7 @@ class Utility(object):
     @staticmethod
     def create_tree():
         """ Faster network discovery with scapy """
-        xbase = 150
-        ybase = 150
-        xrandmax = 350
-        yrandmax = 350
+        base = 150
         gatewway = None
         devices = defaultdict(list)
         cdevices = defaultdict(dict)
@@ -124,7 +121,7 @@ class Utility(object):
 
         for idx in range(0, len(alive)):
 
-            mac = None; ipaddr = None; hostname = None
+            mac = ipaddr = hostname = None
 
             try:
                 hname, _, _ = socket.gethostbyaddr(alive[idx][1].psrc)
@@ -132,12 +129,13 @@ class Utility(object):
                 ipaddr = alive[idx][1].psrc
                 hostname = hname.split(".")[0]
             except:
-                mac = alive[idx][1].hwsrc; ipaddr = alive[idx][1].psrc
+                mac = alive[idx][1].hwsrc
+                ipaddr = alive[idx][1].psrc
                 hostname = alive[idx][1].psrc
 
             devices["nodes"].append({"name": hostname, "id": ipaddr,\
-                "x" : xbase + random.randint(1, xrandmax),\
-                "y" : ybase + random.randint(1, yrandmax),\
+                "x" : base + random.randint(1, base+200),\
+                "y" : base + random.randint(1, base+200),\
                 "group": idx, "mac": mac})
 
             cdevices[hostname]['ip'] = ipaddr

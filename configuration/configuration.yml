@@ -1,14 +1,26 @@
+#--------------------------------------------------------------------------------#
+# Name: Sujayyendhiren Ramarao Srinivasamurthi                                   #
+#                                                                                #
+# Description: Host discovery by this tool can be improved by adding one or more #
+# strings as a list to the keyword 'hostdiscovery'. Essentially these strings    #
+# would lookup the device hostname for a match.                                  #
+#--------------------------------------------------------------------------------#
 ---
-
 HOME_NETWORK: "192.168.1.0/24"
 
 PHILLIPS:
   username: "wBFC5TMhuJkeg7EH0BIpbOejQTmivI7tCw7NZYZi"
   baseuri: "http://{phillipsbridgeip}/api/{username}/lights"
+  hostdiscovery:
+    - philips
+    - hue
 
 BOSESOUNDTOUCH:
   baseuri:  "http://{boseip}:8090/{option}" 
   username: ""
+  hostdiscovery:
+    - sound
+    - touch
 
 APPLETV:
   baseuri: "http://{appletvip}/remoteAction={action}"

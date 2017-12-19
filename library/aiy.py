@@ -32,7 +32,7 @@ class Aiy(object):
         if service not in self.available:
             raise Exception("Invalid service - {0}".format(service))
 
-        for rootdir, availservice in self.available:
+        for _, availservice in self.available:
             if availservice == service and service not in self.activeprocesses:
                 #Create an active process
                 pass
