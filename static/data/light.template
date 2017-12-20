@@ -30,7 +30,7 @@
                 { "name": "Green",  "href": "/philips/ID/hue25000", "color": "green"},
                 { "name": "Blue",   "href": "/philips/ID/hue46920", "color": "blue"},
                 { "name": "Yellow", "href": "/philips/ID/hue12750", "color": "yellow"},
-                { "name": "Red",    "href": "/philips/ID/hue0",     "color": "red"},
+                { "name": "Red",    "href": "/philips/ID/hue05",     "color": "red"},
                 { "name": "White",  "href": "/philips/ID/hue18000", "color": "white"}
             ]
         }

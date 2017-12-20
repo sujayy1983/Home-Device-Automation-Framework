@@ -46,17 +46,17 @@ Description: Home network automation WEB UI framework.
 
 ```
     Open Terminal
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
     brew install libdnet nmap
-    sudo python homeautomation.py
+    sudo python3 homeautomation.py
 ```
 
 ##### Raspberry Pi - 3
 ```
     Open Terminal
-    sudo apt-get install python-pandas libdnet nmap
-    sudo pip install -r requirements.txt
-    sudo python homeautomation.py
+    sudo apt-get install python3-pandas libdnet nmap
+    sudo pip3 install -r requirements.txt
+    sudo python3 homeautomation.py
 ```
 
 ### Future plans

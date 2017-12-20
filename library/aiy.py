@@ -12,33 +12,43 @@ class Aiy(object):
         #----------------------#
         # Available service(s) #
         #----------------------#
-        self.available = []
+        self.available = {}
         #------------------------------------#
         # Maintain one instance of a service #
         #------------------------------------#
         self.activeprocesses = {}
-        rootdir = '~/AIY-voice-kit-python'
+        self.rootdir = '~/AIY-voice-kit-python'
         programs = {"gassistant": 'src/assistant_library_demo.py'}
         #------------------------------#
         # Check if a service available #
         #------------------------------#
         for service in programs:
-            if os.path.isfile("{0}/{1}".format(rootdir, programs[service])):
-                self.available.append((rootdir, service))
+            if os.path.isfile("{0}/{1}".format(self.rootdir, \
+                programs[service])):
+                self.available[service] = True
+            else:
+                self.available[service] = "Not installed."
 
     def start(self, service):
         """ Start a program """
-
         if service not in self.available:
             raise Exception("Invalid service - {0}".format(service))
+        elif  isinstance(self.available[service], str):
+            raise Exception("Service - [{}] not installed".format(service))
 
-        for _, availservice in self.available:
+        for availservice in self.available:
             if availservice == service and service not in self.activeprocesses:
-                #Create an active process
-                pass
+                print("Start service: {}@{}".format(self.rootdir, service))
+                self.activeprocesses[service] = None
 
     def stop(self, service):
         """ Stop a program """
-
         if service in self.activeprocesses:
-            pass
+            print("Start service: {}".format(service))
+
+    def process_request(self, service, action):
+        """ Process requests for action to be taken on
+            a service.
+        """
+        function = getattr(self, action)
+        return function(service)

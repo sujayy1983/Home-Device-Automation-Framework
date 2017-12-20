@@ -16,6 +16,8 @@ from nvd3 import multiBarChart
 from werkzeug.utils import secure_filename
 
 from library.bose import Bose
+from library.aiy  import Aiy
+from library.network import HomeNetwork
 from library.philips import Philips
 from library.Utility import Utility
 
@@ -209,7 +211,7 @@ def d3display(option=None):
     """ Discover home network """
     try:
         if not option:
-            Utility.create_tree()
+            HomeNetwork.create_tree()
     except OSError as err:
         print("OS error: {0}".format(err))
     except:
@@ -250,7 +252,7 @@ def osdetection(ipaddr=None):
             for hostname in cache:
                 ipaddr.append((cache[hostname]['ip'], hostname))
 
-        osdetect = Utility()
+        osdetect = HomeNetwork()
 
         pool = Pool(processes=len(ipaddr))
         result = pool.map(osdetect.os_detection, ipaddr)
@@ -272,9 +274,25 @@ def osdetection(ipaddr=None):
 
 
 @application.route('/voicekit')
-def googlekit():
+def googlekit(msg=None):
     """ Google AIY kit """
-    return render_template('aiyvoicekit.html')
+    return render_template('aiyvoicekit.html', msg=msg)
+
+
+@application.route('/aiy/<service>/<action>')
+def aiycontrols(service=None, action=None):
+    """ Control raspberrypi AIY kit """
+
+    aiy = Aiy(); msg = None
+
+    try:
+        aiy.process_request(service, action)
+    except:
+        msg = ''
+        if service in aiy.available:
+            msg += "{} - {} \n\n".format(service, aiy.available[service])
+        msg += traceback.format_exc()
+    return googlekit(msg)
 
 
 @application.route('/')
