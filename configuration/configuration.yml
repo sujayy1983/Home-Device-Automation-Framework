@@ -26,6 +26,12 @@ APPLETV:
   baseuri: "http://{appletvip}/remoteAction={action}"
   username: ""
 
+AIYKIT:
+  rootdir: "/home/pi/AIY-voice-kit-python"
+
+  services:
+    gassistant: 'src/assistant_library_demo.py'
+
 KAGGLEPROCESS:
   username: ""
   password: ""

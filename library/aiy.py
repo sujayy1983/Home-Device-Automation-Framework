@@ -4,27 +4,29 @@
 
 import os
 
+from library.Utility import Utility
+
 class Aiy(object):
     """ Google voice kit controls """
 
     def __init__(self):
         """ Initializations and/or discovery """
+
+        aiycfg = Utility.read_configuration("AIYKIT")
+        self.rootdir = aiycfg["rootdir"]
+
         #----------------------#
         # Available service(s) #
         #----------------------#
         self.available = {}
-        #------------------------------------#
-        # Maintain one instance of a service #
-        #------------------------------------#
         self.activeprocesses = {}
-        self.rootdir = '~/AIY-voice-kit-python'
-        programs = {"gassistant": 'src/assistant_library_demo.py'}
+
         #------------------------------#
         # Check if a service available #
         #------------------------------#
-        for service in programs:
+        for service in aiycfg["services"]:
             if os.path.isfile("{0}/{1}".format(self.rootdir, \
-                programs[service])):
+                aiycfg["services"][service])):
                 self.available[service] = True
             else:
                 self.available[service] = "Not installed."

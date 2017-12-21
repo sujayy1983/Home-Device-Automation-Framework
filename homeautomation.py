@@ -154,7 +154,6 @@ def toggelelights(light=None, devid=None, color=None):
         Philips.create_dendrogram_input()
 
         if light:
-            print("Light: {0}".format(light))
             Philips.philips_light_switch(int(light), hue)
 
         if color and devid:
@@ -166,8 +165,11 @@ def toggelelights(light=None, devid=None, color=None):
                 Philips.philips_light_colors(devid, hue, bri=int(bri))
 
         return render_template('philips.html')
+
     except OSError as err:
         print("OS error: {0}".format(err))
+        return render_template('failure.html', message="Phillips hue detection failed")
+
     except:
         print(traceback.format_exc())
         return render_template('failure.html', message="Phillips hue detection failed")
