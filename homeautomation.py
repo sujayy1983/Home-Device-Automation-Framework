@@ -247,14 +247,14 @@ def googlekit(msg=None):
 def aiycontrols(service=None, action=None):
     """ Control raspberrypi AIY kit """
 
+    msg = None 
     aiy = Aiy()
 
     try:
         aiy.process_request(service, action)
     except:
-        msg = ''
         if service in aiy.available:
-            msg += "{} - {} \n\n".format(service, aiy.available[service])
+            msg = "{} - {} \n\n".format(service, aiy.available[service])
         msg += traceback.format_exc()
     return googlekit(msg)
 
