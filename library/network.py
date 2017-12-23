@@ -7,48 +7,11 @@ import json
 import socket
 import random
 from collections import defaultdict
-
-import nmap
 from scapy.all import srp, Ether, ARP
 from library.Utility import Utility
 
 class HomeNetwork(object):
     """ Home network and other properties discovery """
-
-    def os_detection(self, iphost):
-        """ Detect OS of a device """
-
-        ipaddr, hostname = iphost
-
-        pscan = nmap.PortScanner()
-        pscan.scan(hosts=ipaddr, arguments='-O')
-        pscan.all_hosts()
-        print('-'*70)
-        print("Ipaddr: {} Hostname: {}".format(ipaddr, hostname))
-        print('-'*70)
-
-        if 'osclass' in pscan[ipaddr]:
-            for osclass in pscan[ipaddr]['osclass']:
-                print('OsClass.type : {0}'.format(osclass['type']))
-                print('OsClass.vendor : {0}'.format(osclass['vendor']))
-                print('OsClass.osfamily : {0}'.format(osclass['osfamily']))
-                print('OsClass.osgen : {0}'.format(osclass['osgen']))
-                print('OsClass.accuracy : {0}'.format(osclass['accuracy']))
-                print('-'*70)
-                return (hostname, osclass, 'type1')
-
-        if 'osmatch' in pscan[ipaddr]:
-            for osmatch in pscan[ipaddr]['osmatch']:
-                print('osmatch.name : {0}'.format(osmatch['name']))
-                print('osmatch.accuracy : {0}'.format(osmatch['accuracy']))
-                print('osmatch.line : {0}'.format(osmatch['line']))
-                print('-'*70)
-                return (hostname, osmatch, 'type2')
-
-        if 'fingerprint' in pscan[ipaddr]:
-            print('Fingerprint : {0}'.format(pscan[ipaddr]['fingerprint']))
-            print('-'*70)
-            return (hostname, pscan[ipaddr]['fingerprint'], 'type3')
 
     @staticmethod
     def create_tree():

@@ -7,7 +7,6 @@ import os
 import json
 import traceback
 from glob import glob
-from multiprocessing import Pool
 
 import flask
 from flask import Flask, render_template, request
@@ -17,7 +16,6 @@ from werkzeug.utils import secure_filename
 
 from library.bose import Bose
 from library.aiy  import Aiy
-from library.network import HomeNetwork
 from library.philips import Philips
 from library.Utility import Utility
 
@@ -182,12 +180,9 @@ def bosesoundtouch(key=None):
 
     try:
         if key != None:
+            Bose.change_key_attr(key)
 
-            if key == 'PRESETS':
-                Bose.check_presets()
-            else:
-                Bose.change_key_attr(key)
-
+        print("Here i am ... ")
         return render_template('bosesoundtouch.html', \
                 display=json.dumps(Bose.get_bose_info(), indent=4),\
                 bosehostname=Bose.__HOSTNAME__,\
@@ -207,22 +202,6 @@ def view_datasets():
                             key=lambda s: s.lower()), columns=[])
 
 
-@application.route('/d3display')
-@application.route('/d3display/<option>')
-def d3display(option=None):
-    """ Discover home network """
-    try:
-        if not option:
-            HomeNetwork.create_tree()
-    except OSError as err:
-        print("OS error: {0}".format(err))
-    except:
-        print(traceback.format_exc())
-        return render_template('failure.html', message="Home network discovery failure")
-
-    return render_template('d3homedevices.html')
-
-
 @application.route('/appletv')
 @application.route('/appletv/<action>')
 def appletv(action=None):
@@ -238,36 +217,19 @@ def appletv(action=None):
 
 
 @application.route('/osdetection')
-@application.route('/osdetection/<ipaddr>')
-def osdetection(ipaddr=None):
+def osdetection():
     """ OS detection is performed here """
     try:
-        osdata = {}
-        columns = None
+        osdata = None
+        cache = Utility.cache('osdetection', 'read')
 
-        if ipaddr:
-            ipaddr = [(ipaddr, None)]
-        else:
-            ipaddr = []
-            cache = Utility.cache('devices', 'read')
+        for osentry in cache:
+            if not osdata: osdata = []
+            osentry.update(osentry["osclass"][0])
+            del osentry["osclass"]
+            osdata.append(osentry)
 
-            for hostname in cache:
-                ipaddr.append((cache[hostname]['ip'], hostname))
-
-        osdetect = HomeNetwork()
-
-        pool = Pool(processes=len(ipaddr))
-        result = pool.map(osdetect.os_detection, ipaddr)
-        pool.close()
-        pool.join()
-
-        for hostname, osname, _ in result:
-            osdata[hostname] = osname
-
-            if not columns:
-                columns = osname.keys()
-
-        return render_template('ostable.html', osdata=osdata, columns=columns)
+        return render_template('ostable.html', osdata=osdata)
     except OSError as err:
         print("OS error: {0}".format(err))
     except:
@@ -285,7 +247,7 @@ def googlekit(msg=None):
 def aiycontrols(service=None, action=None):
     """ Control raspberrypi AIY kit """
 
-    aiy = Aiy(); msg = None
+    aiy = Aiy()
 
     try:
         aiy.process_request(service, action)
@@ -295,6 +257,13 @@ def aiycontrols(service=None, action=None):
             msg += "{} - {} \n\n".format(service, aiy.available[service])
         msg += traceback.format_exc()
     return googlekit(msg)
+
+
+@application.route('/d3display')
+def d3display():
+    """ Discover home network """
+
+    return render_template('d3homedevices.html')
 
 
 @application.route('/')

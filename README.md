@@ -1,16 +1,16 @@
 ```
 Author: Sujayyendhiren Ramarao
 
-Description: Home network automation WEB UI framework.
+Description: Home network automation micro web framework.
 ```
 
 ### What does this micro app offer ?
 
 1. Home network discovery and caching 
-....(i) D3Js Forcelayout visualization of discovered devices. Hover mouse over any node to view
+(i) D3Js Forcelayout visualization of discovered devices. Hover mouse over any node to view
        IP address and hostname of device.
        ![Discovered home network](/static/img/samplenw.png)
-....(ii) Caching of discovered info that can be leveraged by other parts of automation
+(ii) Caching of discovered info that can be leveraged by other parts of automation
         Current logic leverages cached data by looking at hostname for key match.
 
 2. Basic Hue Light controls - Already configured lights are discovered and displayed on the UI
@@ -19,7 +19,7 @@ Description: Home network automation WEB UI framework.
 3. Bose Soundtouch - Device info display
    ![BoseSoundtouch view](/static/img/samplebose.png)
 
-4. Os detection of discovered devices
+4. Os detection of discovered devices 
    Note: Few entries are intentionally removed for security reasons.
    ![OS detection of home devices](/static/img/sampleosdetect.png)
 
@@ -42,21 +42,55 @@ Description: Home network automation WEB UI framework.
 
 ### Install and run this application
 
-##### MAC - Install and run this micro app 
+##### Install dependencies on MAC
 
 ```
     Open Terminal
     pip3 install -r requirements.txt
     brew install libdnet nmap
-    sudo python3 homeautomation.py
 ```
 
-##### Raspberry Pi - 3
+##### Install dependencies on Raspberry Pi - 3
 ```
     Open Terminal
     sudo apt-get install python3-pandas libdnet nmap
     sudo pip3 install -r requirements.txt
-    sudo python3 homeautomation.py
+```
+
+##### Running the application
+Run backgroud job that caches device information and that requires 
+privileged permissions
+```
+    sudo python3 osdetectioncron.py
+```
+
+Run flask server
+```
+    python3 homeautomation.py
+```
+
+### Start home automation as a service on bootup - Debian
+
+##### Systemd configuration
+
+Please specify a user in the following 'systemd' config as it is not a 
+good practice to provide elevated privileges. Only reason for giving
+elevated privilege is to run OS scanning/detection. If we are not much
+interested in that feature then we do not need higher privileges.
+
+```
+[Unit]
+Description=My Home Network automation
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=<Your working directory>
+ExecStart=/usr/bin/python3 homeautomation.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
 ```
 
 ### Future plans
@@ -71,10 +105,8 @@ Description: Home network automation WEB UI framework.
 - Container network and home network are different so issue discovering in
   containerized version
 - No logging in the initial commit
-- Cached device info should be used more intelligently than now
 - Improvements in REST abstraction 
 - Code assumes that ip address ending with '.1' is Gateway
-- Lots of code restructing shall be done soon and comply with coding standards
 
 
 ### Docker implementation

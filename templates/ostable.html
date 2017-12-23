@@ -19,21 +19,29 @@
                     <thead>
                         <tr>
                             <th>Hostname</th>
-                            {% for column in columns %}
-                            <th>{{column}}</th>
-                            {% endfor %}
+                            <th>IP address</th>
+                            <th>OS name</th>
+                            <th>Detection Accuracy (%)</th>
+                            <th>Type</th>
+                            <th>Vendor</th>
+                            <th>OS family</th>
+                            <th>OS Gen</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                      {% for hostname in osdata %}
+                    {% for elem in osdata %}
                         <tr>
-                            <td>{{hostname}}</td>
-                            {% for cell in osdata[hostname]%}
-                            <td>{{osdata[hostname][cell]}}</td>
-                            {%endfor%}
+                            <td>{{elem.hostname}}</td>
+                            <td>{{elem.ip}}</td>
+                            <td>{{elem.name}}</td>
+                            <td>{{elem.accuracy}}</td>
+                            <td>{{elem.type}}</td>
+                            <td>{{elem.vendor}}</td>
+                            <td>{{elem.osfamily}}</td>
+                            <td>{{elem.osgen}}</td>
                         </tr>
-                      {%endfor%}
+                    {%endfor%}
                     </tbody>
                 </table>
             </div>
