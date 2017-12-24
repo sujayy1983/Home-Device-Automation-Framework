@@ -182,13 +182,13 @@ def bosesoundtouch(key=None):
         if key != None:
             Bose.change_key_attr(key)
 
-        print("Here i am ... ")
         return render_template('bosesoundtouch.html', \
                 display=json.dumps(Bose.get_bose_info(), indent=4),\
                 bosehostname=Bose.__HOSTNAME__,\
                 boseip=Bose.__IP__)
     except OSError as err:
         print("OS error: {0}".format(err))
+        return render_template('failure.html', message="OS error: {0}".format(err))
     except:
         print(traceback.format_exc())
         return render_template('failure.html', message="Soundtouch detection failed")

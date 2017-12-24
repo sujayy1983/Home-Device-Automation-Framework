@@ -10,3 +10,4 @@ library/__pycache__/*
 library/*.pyc
 static/data/*.json
 nohup.out
+*_orig.html
