@@ -50,7 +50,7 @@ class Philips(object):
             if 'hue' in device.lower() and 'philips' in device.lower():
                 Philips.__HUEBRIDGE__ = devices[device]['ip']
 
-        config = Utility.read_configuration('PHILLIPS')
+        config = Utility.read_configuration(config='PHILLIPS')
 
         username = config['username']
         

@@ -1,6 +1,6 @@
 output/*
 logs/*
-cache/*
+cache/*.cache
 datasets/*
 .vscode/*
 .idea/*
@@ -11,3 +11,4 @@ library/*.pyc
 static/data/*.json
 nohup.out
 *_orig.html
+configuration/haconf.yml

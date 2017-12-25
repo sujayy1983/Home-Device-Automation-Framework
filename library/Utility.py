@@ -4,6 +4,8 @@ Description: Reusable utilities across modules are placed here
 """
 
 import json
+from glob import glob
+from socket import gethostname
 
 import yaml
 import requests
@@ -13,9 +15,11 @@ class Utility(object):
     """ Utility functions """
 
     @staticmethod
-    def read_configuration(config=None):
+    def read_configuration(configfile="configuration.yml",\
+            config=None):
         """ Read configuration """
-        with open("configuration/configuration.yml", 'r') as read:
+        configfile = "configuration/{0}".format(configfile)
+        with open(configfile, 'r') as read:
             if config:
                 config = yaml.load(read.read())[config]
             else:
@@ -23,14 +27,22 @@ class Utility(object):
             return config
 
     @staticmethod
+    def hostname():
+        return str(gethostname()).split(".")[0]
+
+    @staticmethod
     def cache(filename="default", action="read", data=None):
         """ Cache network data and others that can be reused """
 
-        filepath = "cache/{0}.cache".format(filename)
+        hostname = Utility.hostname()
+        filepath = "cache/{0}-{1}.cache".format(filename, hostname)
 
         if action == "read":
-            with open(filepath, 'r') as cache:
-                return json.loads(cache.read())
+            readata = {}
+            for filepath in glob("cache/{0}-*.cache".format(filename)):
+                with open(filepath, 'r') as cache:
+                    readata.update(json.loads(cache.read()))
+            return readata
 
         elif action == "write":
             with open(filepath, 'w') as cache:
@@ -49,7 +61,7 @@ class Utility(object):
             if 'apple' in device.lower() and 'tv' in device.lower():
                 appletvip = devices[device]['ip']
 
-        config = Utility.read_configuration('APPLETV')
+        config = Utility.read_configuration(config='APPLETV')
 
         return config['baseuri'].format(action=action,\
                                      appletvip=appletvip)

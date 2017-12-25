@@ -4,6 +4,7 @@ Description: Network discovery and other network related features move here shor
 """
 
 import json
+import math
 import socket
 import random
 from collections import defaultdict
@@ -39,10 +40,7 @@ class HomeNetwork(object):
                 ipaddr = alive[idx][1].psrc
                 hostname = alive[idx][1].psrc
 
-            import math
-            radius = 25
-            yoncircle = x = base 
-
+            radius = 25; yoncircle = 960/2; x = 600/2 
 
             if not ipaddr.endswith('.1'):
                 devices["links"].append({"source":  "", "target":  ipaddr})
@@ -70,3 +68,10 @@ class HomeNetwork(object):
             jswrt.write(json.dumps(devices, indent=4))
 
         Utility.cache("devices", action="write", data=cdevices)
+
+
+    @staticmethod
+    def hasync():
+        """ Sync HA data """
+        
+        pass

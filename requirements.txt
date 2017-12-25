@@ -7,3 +7,4 @@ python-nvd3
 python-nmap
 scapy-python3
 netifaces
+pysftp==0.2.9

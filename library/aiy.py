@@ -12,7 +12,7 @@ class Aiy(object):
     def __init__(self):
         """ Initializations and/or discovery """
 
-        aiycfg = Utility.read_configuration("AIYKIT")
+        aiycfg = Utility.read_configuration(config="AIYKIT")
         self.rootdir = aiycfg["rootdir"]
 
         #----------------------#

@@ -47,7 +47,7 @@ class Bose(object):
     @staticmethod
     def get_bose_baseurl(option):
         """ Get basic url and other info """
-        bosecfg = Utility.read_configuration("BOSESOUNDTOUCH")
+        bosecfg = Utility.read_configuration(config="BOSESOUNDTOUCH")
         devices = Utility.cache("devices", "read")
         Bose.discover_boseip(devices, bosecfg)
         print("IP fetched for URL - {}".format(Bose.__IP__))

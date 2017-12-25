@@ -224,7 +224,8 @@ def osdetection():
         cache = Utility.cache('osdetection', 'read')
 
         for osentry in cache:
-            if not osdata: osdata = []
+            if not osdata:
+                osdata = []
             osentry.update(osentry["osclass"][0])
             del osentry["osclass"]
             osdata.append(osentry)
@@ -240,7 +241,16 @@ def osdetection():
 @application.route('/voicekit')
 def googlekit(msg=None):
     """ Google AIY kit """
-    return render_template('aiyvoicekit.html', msg=msg)
+    cache = Utility.cache('devices', 'read')
+
+    for hostname in cache:
+        if 'rasp' in hostname and 'pi' in hostname:
+            raspip = cache[hostname]['ip']
+            rasphost = hostname
+            break
+
+    return render_template('aiyvoicekit.html', rasphostname=rasphost,\
+                raspip=raspip, msg=msg)
 
 
 @application.route('/aiy/<service>/<action>')
