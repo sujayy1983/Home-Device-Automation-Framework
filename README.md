@@ -38,6 +38,30 @@ Description: Home network automation micro web framework.
 ### Configuring this micro app
 (i) Add more configurable parameters in configuration/configuration.yml
 (ii) As we add more features we will cache data into the directory cache/*.cache
+(iii) If we are interested in running this app in two of the raspberry pis at home and make device detection more
+      reliable then there is an evolving feature that can sync device detection from across secondary devices via sftp.
+      for setting that feature create a file "configuration/haconf.yml" and fill in username and password of primary 
+      Raspberry pi.
+
+```
+---
+
+#------------------------------------------------------#
+# HA configuration for Primary-Secondary Configuration #
+# -----------------------------------------------------#
+
+CLUSTERINFO:
+  primary: "raspberrypi.local"
+  others: ["raspberrypi-second.local"]
+
+CREDENTIALS:
+  username: <username> 
+  password: <password> 
+
+DIRECTORY:
+  syncdir: "<absolute-path>/Home-Device-Automation-Framework/cache"
+  getfiles: ["devices-{0}.cache", "osdetection-{0}.cache"]
+```
 
 
 ### Install and run this application

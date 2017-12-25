@@ -30,6 +30,10 @@ def syncaches():
          password=creds["password"], cnopts=cnopts) as sftp:
         with sftp.cd(cfg["DIRECTORY"]["syncdir"]):
             primary = primary.split('.')[0]
+
+            if primary == myhostname:
+                return
+
             for acache in cfg["DIRECTORY"]["getfiles"]:
                 print("---GET--- {}".format(acache.format(primary)))
                 sftp.get(acache.format(primary))
@@ -104,6 +108,13 @@ def osdetection():
     cache = Utility.cache('osdetection', 'write', result)
 
 if __name__ == '__main__':
-    #HomeNetwork.create_tree()
-    #osdetection()
-    syncaches()
+    HomeNetwork.create_tree()
+    osdetection()
+ 
+    #----------------------------------------#
+    # New feature and thus skip any failures #
+    #----------------------------------------#
+    try:
+        syncaches()
+    except:
+        pass
