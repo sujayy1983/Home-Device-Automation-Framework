@@ -7,6 +7,7 @@ import os
 import json
 import traceback
 from glob import glob
+from datetime import datetime
 
 import flask
 from flask import Flask, render_template, request
@@ -234,16 +235,15 @@ def osdetection():
 @application.route('/voicekit')
 def googlekit(msg=None):
     """ Google AIY kit """
-    cache = Utility.cache('devices', 'read')
+    service = None
+    status = None
 
-    for hostname in cache:
-        if 'rasp' in hostname and 'pi' in hostname:
-            raspip = cache[hostname]['ip']
-            rasphost = hostname
-            break
+    aiy = Aiy()
+    for service in aiy.available:
+        status = aiy.available[service]
 
-    return render_template('aiyvoicekit.html', rasphostname=rasphost,\
-                raspip=raspip, msg=msg)
+    return render_template('aiyvoicekit.html', service=service,\
+                status=status, msg=msg)
 
 
 @application.route('/aiy/<service>/<action>')
@@ -268,8 +268,10 @@ def aiycontrols(service=None, action=None):
 @application.route('/d3display')
 def d3display():
     """ Discover home network """
-    HomeNetwork.create_d3json()
-    return render_template('d3homedevices.html')
+    filename = "networkdata-{}.json".format(datetime.now())
+    jsonfile = "/static/data/{0}".format(filename)
+    HomeNetwork.create_d3json(jsonfile=jsonfile)
+    return render_template('d3homedevices.html', jsonfile=jsonfile)
 
 
 @application.route('/')

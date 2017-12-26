@@ -10,15 +10,15 @@ http://css-tricks.com/perfect-full-page-background-image
 
 Photo:
 http://www.publicdomainpictures.net/view-image.php?image=44399
-
+*/
 
 body { 
-    background: url('/static/img/network.jpg') no-repeat center center fixed; 
+    background: url('/static/img/devices.jpg') no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-}*/
+}
   
 .container{
   padding: 25px;   

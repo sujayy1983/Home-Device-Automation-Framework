@@ -29,17 +29,17 @@
   }
 </style>
 
-<svg width="960" height="600" align="center"></svg>
-
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet">
 
-<script>
+<svg width="960" height="600" align="center"></svg>
 
+<script>
 d3.select("body").style("background-color", d3.rgb(245, 245, 220))
 
 var svg = d3.select("svg")
-         .attr("style", "outline: thin solid black;");
+         .attr("style", "outline: thin solid black;")
+         .style("background-color", "white");
 
 var  width = +svg.attr("width");
 var height = +svg.attr("height");
@@ -54,7 +54,7 @@ var simulation = d3.forceSimulation()
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-d3.json("/static/data/graph.json", function(error, graph) {
+d3.json("{{jsonfile}}", function(error, graph) {
     if (error) throw error;
                 
     //set up the simulation 

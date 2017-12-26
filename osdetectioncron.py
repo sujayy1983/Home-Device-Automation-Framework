@@ -5,8 +5,10 @@ Description: Run this program from cron on a periodic basis and cache the data.
              and thus isolating this program helps us not run the flask app with sudo
              permissions
 """
+import os
 import json
 import traceback
+from glob import glob
 from collections import defaultdict
 from multiprocessing import Pool
 
@@ -14,34 +16,6 @@ import nmap
 import pysftp
 from library.network import HomeNetwork
 from library.Utility import Utility
-
-
-def syncaches():
-    """ Sync caches """
-
-    cfg = Utility.read_configuration(configfile="haconf.yml")
-
-    primary = cfg["CLUSTERINFO"]["primary"]
-    myhostname = Utility.hostname()
-    creds = cfg["CREDENTIALS"]
-
-    cnopts = pysftp.CnOpts()
-    cnopts.hostkeys = None
-    with pysftp.Connection(primary, username=creds["username"],\
-         password=creds["password"], cnopts=cnopts) as sftp:
-        with sftp.cd(cfg["DIRECTORY"]["syncdir"]):
-            primary = primary.split('.')[0]
-
-            if primary == myhostname:
-                return
-
-            for acache in cfg["DIRECTORY"]["getfiles"]:
-                print("---GET--- {}".format(acache.format(primary)))
-                sftp.get("cache/{0}".format(acache.format(primary)),\
-                    preserve_mtime=True)
-
-                print("---PUT--- {}".format(acache.format(myhostname)))
-                sftp.put("cache/{0}".format(acache.format(myhostname)))
 
 
 def oshandler(iphost):
@@ -131,6 +105,14 @@ def osdetection():
     Utility.cache('osdetection', 'write', newstruct)
     Utility.cache('osdetectfailed', 'write', osfailure)
 
+
+def cleanup():
+    """ Cleanup previously network topology temp data """
+
+    for afile in glob("static/data/networkdata-*.json"):
+        os.remove(afile)
+
 if __name__ == '__main__':
     HomeNetwork.create_tree()
     osdetection()
+    cleanup()

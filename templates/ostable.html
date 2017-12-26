@@ -5,45 +5,47 @@
 {% block head %}
     {{ super() }}
     <link href="/static/css/discover.css" rel="stylesheet">
+    <style>
+        .container-full {
+            background-color: white;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <h2 align="center">Home network - OS detection</h2>
-    
-<div class="panel panel-info">
-    <div class="panel-heading">Os detection
-    </div>
-    
-    <div class="panel-body">
-        <table class="table table-bordered table-striped" data-toggle="table" data-search="true" data-filter-control="true" data-show-export="true" data-click-to-select="true">
-            <thead>
-                <tr>
-                    <th>Hostname</th>
-                    <th>IP address</th>
-                    <th>OS name</th>
-                    <th>Detection Accuracy (%)</th>
-                    <th>Type</th>
-                    <th>Vendor</th>
-                    <th>OS family</th>
-                    <th>OS Gen</th>
-                </tr>
-            </thead>
 
-            <tbody>
-            {% for elem in osdata %}
-                <tr>
-                    <td>{{elem.hostname}}</td>
-                    <td>{{elem.ip}}</td>
-                    <td>{{elem.osname}}</td>
-                    <td>{{elem.osaccuracy}}</td>
-                    <td>{{elem.ostype}}</td>
-                    <td>{{elem.osvendor}}</td>
-                    <td>{{elem.osfamily}}</td>
-                    <td>{{elem.osgen}}</td>
-                </tr>
-            {%endfor%}
-            </tbody>
-        </table> 
-    </div>
+<div class="container-full">
+    <table class="table table-bordered table-striped" data-toggle="table" data-search="true" data-filter-control="true" data-show-export="true" data-click-to-select="true">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>IP address</th>
+                <th>OS name</th>
+                <th>Detection Accuracy (%)</th>
+                <th>Type</th>
+                <th>Vendor</th>
+                <th>OS family</th>
+                <th>OS Gen</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for elem in osdata %}
+            <tr>
+                <td>{{elem.hostname}}</td>
+                <td>{{elem.ip}}</td>
+                <td>{{elem.osname}}</td>
+                <td>{{elem.osaccuracy}}</td>
+                <td>{{elem.ostype}}</td>
+                <td>{{elem.osvendor}}</td>
+                <td>{{elem.osfamily}}</td>
+                <td>{{elem.osgen}}</td>
+            </tr>
+        {%endfor%}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

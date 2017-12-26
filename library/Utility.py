@@ -28,6 +28,7 @@ class Utility(object):
 
     @staticmethod
     def hostname():
+        """ Get this device's hostname """
         return str(gethostname()).split(".")[0]
 
     @staticmethod

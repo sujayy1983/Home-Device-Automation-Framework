@@ -27,9 +27,9 @@ class Aiy(object):
         for service in aiycfg["services"]:
             if os.path.isfile("{0}/{1}".format(self.rootdir, \
                 aiycfg["services"][service])):
-                self.available[service] = True
+                self.available[service] = "Available"
             else:
-                self.available[service] = "Not installed."
+                self.available[service] = "Not available on this host."
 
     def start(self, service):
         """ Start a program """

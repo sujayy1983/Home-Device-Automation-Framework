@@ -130,7 +130,7 @@ class HomeNetwork(object):
         HomeNetwork.add_update_rows(newstruct)
 
     @staticmethod
-    def create_d3json():
+    def create_d3json(jsonfile="static/data/graph.json"):
         """ Create tree from sqlite data """
         gateway = None
         devices = defaultdict(list)
@@ -154,7 +154,10 @@ class HomeNetwork(object):
         for link in devices["links"]:
             link["source"] = gateway
 
-        with open("static/data/graph.json", 'w') as jswrt:
+        if jsonfile.startswith("/"):
+            jsonfile = jsonfile[1:]
+
+        with open(jsonfile, 'w') as jswrt:
             jswrt.write(json.dumps(devices, indent=4))
 
     @staticmethod
