@@ -73,10 +73,9 @@ def oshandler(iphost):
 def osdetection():
     """ Detect OS of the network devices """
     ipaddr = []
-    cache = Utility.cache('devices', 'read')
 
-    for hostname in cache:
-        ipaddr.append((cache[hostname]['ip'], hostname))
+    for hostname in HomeNetwork.get_allhosts():
+        ipaddr.append((HomeNetwork.get_hostname_specificdata(hostname, 'ip'), hostname))
 
     pool = Pool(processes=len(ipaddr))
     results = pool.map(oshandler, ipaddr)
@@ -106,7 +105,7 @@ def osdetection():
     Utility.cache('osdetectfailed', 'write', osfailure)
 
 
-def cleanup():
+def complete_setup():
     """ Cleanup previously network topology temp data """
 
     for afile in glob("static/data/networkdata-*.json"):
@@ -115,4 +114,4 @@ def cleanup():
 if __name__ == '__main__':
     HomeNetwork.create_tree()
     osdetection()
-    cleanup()
+    complete_setup()

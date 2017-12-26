@@ -25,10 +25,9 @@ class HomeNetwork(object):
         if not cfg:
             cfg = Utility.read_configuration(config="DEVICEDETECT")
 
-        if not os.path.exists(cfg["devicedb"]):
-            connection = sqlite3.connect(cfg["devicedb"])
-            dataframe = pandas.read_csv("templates/devicetable.csv")
-            dataframe.to_sql(cfg["tablename"], connection, index=False)
+        connection = sqlite3.connect(cfg["devicedb"])
+        dataframe = pandas.read_csv("templates/devicetable.csv")
+        dataframe.to_sql(cfg["tablename"], connection, index=False, if_exists='replace')
 
     @staticmethod
     def get_connection_info():
@@ -90,7 +89,6 @@ class HomeNetwork(object):
 
         for host in json.loads(output):
             yield host["hostname"]
-
 
     @staticmethod
     def create_tree():
