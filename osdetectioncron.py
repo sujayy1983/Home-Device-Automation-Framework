@@ -5,8 +5,9 @@ Description: Run this program from cron on a periodic basis and cache the data.
              and thus isolating this program helps us not run the flask app with sudo
              permissions
 """
-
+import json
 import traceback
+from collections import defaultdict
 from multiprocessing import Pool
 
 import nmap
@@ -36,7 +37,8 @@ def syncaches():
 
             for acache in cfg["DIRECTORY"]["getfiles"]:
                 print("---GET--- {}".format(acache.format(primary)))
-                sftp.get(acache.format(primary))
+                sftp.get("cache/{0}".format(acache.format(primary)),\
+                    preserve_mtime=True)
 
                 print("---PUT--- {}".format(acache.format(myhostname)))
                 sftp.put("cache/{0}".format(acache.format(myhostname)))
@@ -88,33 +90,47 @@ def oshandler(iphost):
         osinfo["ip"] = ipaddr
         osinfo["hostname"] = hostname
 
+        if 'osclass' in osinfo:
+            osinfo.update(osinfo['osclass'][0])
+            del osinfo['osclass']
     return osinfo
 
 
 def osdetection():
     """ Detect OS of the network devices """
     ipaddr = []
-
     cache = Utility.cache('devices', 'read')
 
     for hostname in cache:
         ipaddr.append((cache[hostname]['ip'], hostname))
 
     pool = Pool(processes=len(ipaddr))
-    result = pool.map(oshandler, ipaddr)
+    results = pool.map(oshandler, ipaddr)
     pool.close()
     pool.join()
 
-    cache = Utility.cache('osdetection', 'write', result)
+    newstruct = defaultdict(list)
+    osfailure = []
+
+    for aresult in results:
+        if 'exception' not in aresult:
+            newstruct['cpe'].append(aresult['cpe'][0].replace(":", "_"))
+            newstruct['ip'].append(aresult['ip'])
+            newstruct['hostname'].append(aresult['hostname'])
+            newstruct['osvendor'].append(aresult['vendor'])
+            newstruct['osname'].append(aresult['name'])
+            newstruct['ostype'].append(aresult['type'])
+            newstruct['osgen'].append(aresult['osgen'])
+            newstruct['osfamily'].append(aresult['osfamily'])
+            newstruct['osaccuracy'].append(aresult['accuracy'])
+        else:
+            print(json.dumps(aresult, indent=4))
+            osfailure.append(aresult)
+
+    HomeNetwork.add_update_rows(newstruct)
+    Utility.cache('osdetection', 'write', newstruct)
+    Utility.cache('osdetectfailed', 'write', osfailure)
 
 if __name__ == '__main__':
     HomeNetwork.create_tree()
     osdetection()
- 
-    #----------------------------------------#
-    # New feature and thus skip any failures #
-    #----------------------------------------#
-    try:
-        syncaches()
-    except:
-        pass

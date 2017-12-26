@@ -18,6 +18,7 @@ from library.bose import Bose
 from library.aiy  import Aiy
 from library.philips import Philips
 from library.Utility import Utility
+from library.network import HomeNetwork
 
 DATASET = "datasets/{0}"
 UPLOAD_FOLDER = 'datasets'
@@ -220,17 +221,9 @@ def appletv(action=None):
 def osdetection():
     """ OS detection is performed here """
     try:
-        osdata = None
-        cache = Utility.cache('osdetection', 'read')
-
-        for osentry in cache:
-            if not osdata:
-                osdata = []
-            osentry.update(osentry["osclass"][0])
-            del osentry["osclass"]
-            osdata.append(osentry)
-
-        return render_template('ostable.html', osdata=osdata)
+        dataframe = HomeNetwork.read_sqlite3_current()
+        jsdata = dataframe.to_json(orient='records')
+        return render_template('ostable.html', osdata=json.loads(jsdata))
     except OSError as err:
         print("OS error: {0}".format(err))
     except:
@@ -257,22 +250,25 @@ def googlekit(msg=None):
 def aiycontrols(service=None, action=None):
     """ Control raspberrypi AIY kit """
 
-    msg = None 
-    aiy = Aiy()
+    msg = None
+    aiy = None
 
     try:
+        aiy = Aiy()
         aiy.process_request(service, action)
     except:
-        if service in aiy.available:
-            msg = "{} - {} \n\n".format(service, aiy.available[service])
+        msg = ''
+        if aiy and service in aiy.available:
+            msg += "{} - {} \n\n".format(service, aiy.available[service])
         msg += traceback.format_exc()
+
     return googlekit(msg)
 
 
 @application.route('/d3display')
 def d3display():
     """ Discover home network """
-
+    HomeNetwork.create_d3json()
     return render_template('d3homedevices.html')
 
 
@@ -290,4 +286,6 @@ if __name__ == '__main__':
     for directory in ['output', 'cache', 'datasets', 'logs', 'static/data']:
         if not os.path.exists(directory):
             os.mkdir(directory)
+
+    HomeNetwork.initializetable()
     application.run(host="0.0.0.0", processes=8)

@@ -12,3 +12,5 @@ static/data/*.json
 nohup.out
 *_orig.html
 configuration/haconf.yml
+cache/*.db
+apptest.py

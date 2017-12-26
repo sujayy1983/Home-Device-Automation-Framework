@@ -2,13 +2,14 @@
 Author: Sujayyendhiren Ramarao Srinivasamurthi
 Description: Bose soundtouch API
 """
-
+import json
 import xml.dom.minidom
 
 import requests
 import xmltodict
 
 from library.Utility import Utility
+from library.network import HomeNetwork
 
 class Bose(object):
     """ Bose functionalities are static methods for now. Eventually
@@ -22,22 +23,20 @@ class Bose(object):
     __PERCENT_MATCH__ = 0
 
     @staticmethod
-    def discover_boseip(devices, bosecfg):
+    def discover_boseip(bosecfg):
         """ Discover IP based on configuration settings """
-        matchcnt = 0
         ipmatch = hostmatch = None
         lookupstrings = bosecfg["hostdiscovery"]
 
-        for device in devices:
+        for device in HomeNetwork.get_allhosts():
+            matchcnt = 0
             for string in lookupstrings:
                 if string in device.lower():
-                    ipmatch = devices[device]['ip']
+                    ipmatch = HomeNetwork.get_hostname_specificdata(device, 'ip')
                     hostmatch = device
                     matchcnt += 1
 
             percentmatch = (matchcnt * 100)/len(lookupstrings)
-            print("Current %match: {}".format(percentmatch))
-            print("Current IP: {}".format(ipmatch))
 
             if int(percentmatch) > int(Bose.__PERCENT_MATCH__):
                 Bose.__IP__ = ipmatch
@@ -48,8 +47,7 @@ class Bose(object):
     def get_bose_baseurl(option):
         """ Get basic url and other info """
         bosecfg = Utility.read_configuration(config="BOSESOUNDTOUCH")
-        devices = Utility.cache("devices", "read")
-        Bose.discover_boseip(devices, bosecfg)
+        Bose.discover_boseip(bosecfg)
         print("IP fetched for URL - {}".format(Bose.__IP__))
         return bosecfg["baseuri"].format( \
             boseip=Bose.__IP__, option=option)
@@ -57,13 +55,14 @@ class Bose(object):
     @staticmethod
     def get_bose_info():
         """ Get BOSE info """
-
-        inforequest = requests.get(Bose.get_bose_baseurl("info"))
-
+        baseurl = Bose.get_bose_baseurl("info")
+        print("Base URL: {}".format(baseurl))
+        inforequest = requests.get(baseurl)
+        print("Requested info from device.")
         inforesponse = xml.dom.minidom.parseString(inforequest.text)
         inforesponse_pretty = inforesponse.toprettyxml()
         jsdata = xmltodict.parse(inforesponse_pretty, xml_attribs=True)
-        #print(json.dumps(jsdata, indent=4))
+        print(json.dumps(jsdata, indent=4))
         return jsdata
 
     @staticmethod
@@ -88,8 +87,5 @@ class Bose(object):
     @staticmethod
     def check_presets():
         """ Select options """
-        baseurl = Bose.get_bose_baseurl("presets")
-        release = requests.post(baseurl, data="")
+        pass
 
-        print(release.status_code)
-        print(release.text)

@@ -8,6 +8,7 @@ from collections import defaultdict
 
 import requests
 from library.Utility import Utility
+from library.network import HomeNetwork
 
 
 class Philips(object):
@@ -45,15 +46,12 @@ class Philips(object):
     @staticmethod
     def philips_baseurl():
         """ Format baseurl for Phillips Hue bridge """
-        devices = Utility.cache("devices", "read")
-        for device in devices:
+        for device in HomeNetwork.get_allhosts():
             if 'hue' in device.lower() and 'philips' in device.lower():
-                Philips.__HUEBRIDGE__ = devices[device]['ip']
+                Philips.__HUEBRIDGE__ = HomeNetwork.get_hostname_specificdata(device, 'ip')
 
         config = Utility.read_configuration(config='PHILLIPS')
-
         username = config['username']
-        
         return config['baseuri'].format(username=username,\
                             phillipsbridgeip=Philips.__HUEBRIDGE__)
 

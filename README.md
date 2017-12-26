@@ -123,6 +123,7 @@ WantedBy=multi-user.target
 3. Voice activated controls (Leveraging google assistant) 
    or integration with AIY Google kit
 4. More detailed analysis of Kaggle datasets
+5. Release unittest options. For now it is evolving
 
 
 ### Issues

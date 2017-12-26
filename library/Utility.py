@@ -38,11 +38,10 @@ class Utility(object):
         filepath = "cache/{0}-{1}.cache".format(filename, hostname)
 
         if action == "read":
-            readata = {}
             for filepath in glob("cache/{0}-*.cache".format(filename)):
+                print(filepath)
                 with open(filepath, 'r') as cache:
-                    readata.update(json.loads(cache.read()))
-            return readata
+                    return json.loads(cache.read())
 
         elif action == "write":
             with open(filepath, 'w') as cache:
