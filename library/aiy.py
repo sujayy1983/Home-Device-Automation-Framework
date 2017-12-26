@@ -37,7 +37,7 @@ class Aiy(object):
         os.system("sudo systemctl start gassistant.service")
         if service not in self.available:
             raise Exception("Invalid service - {0}".format(service))
-        elif  isinstance(self.available[service], str):
+        elif  self.available[service] != "":
             raise Exception("Service - [{}] not installed".format(service))
 
         for availservice in self.available:

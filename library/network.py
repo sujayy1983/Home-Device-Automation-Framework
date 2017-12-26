@@ -25,24 +25,26 @@ class HomeNetwork(object):
         if not cfg:
             cfg = Utility.read_configuration(config="DEVICEDETECT")
 
-        if not os.path.exists(cfg["devicedb"]):
-            connection = sqlite3.connect(cfg["devicedb"])
-            dataframe = pandas.read_csv("templates/devicetable.csv")
-            dataframe.to_sql(cfg["tablename"], connection, index=False)
+        connection = sqlite3.connect(cfg["devicedb"])
+        dataframe = pandas.read_csv("templates/devicetable.csv")
+        dataframe.to_sql(cfg["tablename"], connection, index=False, if_exists='replace')
 
     @staticmethod
-    def get_connection_info():
+    def get_connection_info(init=False):
         """ Get connection info and table name """
         cfg = Utility.read_configuration(config="DEVICEDETECT")
-        HomeNetwork.initializetable(cfg=cfg)
+
+        if init:
+            HomeNetwork.initializetable(cfg=cfg)
+            
         return sqlite3.connect(cfg["devicedb"]), cfg["tablename"]
 
     @staticmethod
-    def add_update_rows(rowinfo):
+    def add_update_rows(rowinfo, init=False):
         """ sqlite into dataframe """
 
         try:
-            connection, tablename = HomeNetwork.get_connection_info()
+            connection, tablename = HomeNetwork.get_connection_info(init)
             query = "SELECT * from {table}".format(table=tablename)
             dataframe = pandas.read_sql_query(query, connection)
 
@@ -91,7 +93,6 @@ class HomeNetwork(object):
         for host in json.loads(output):
             yield host["hostname"]
 
-
     @staticmethod
     def create_tree():
         """ Faster network discovery with scapy """
@@ -127,7 +128,7 @@ class HomeNetwork(object):
         #---------------------------------#
         # New implementation with sqlite3 #
         #---------------------------------#
-        HomeNetwork.add_update_rows(newstruct)
+        HomeNetwork.add_update_rows(newstruct, init=True)
 
     @staticmethod
     def create_d3json(jsonfile="static/data/graph.json"):
