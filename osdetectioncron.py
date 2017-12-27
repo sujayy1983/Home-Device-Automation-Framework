@@ -82,20 +82,21 @@ def osdetection():
     pool.close()
     pool.join()
 
-    newstruct = defaultdict(list)
+    newstruct = defaultdict(dict)
     osfailure = []
 
     for aresult in results:
         if 'exception' not in aresult:
-            newstruct['cpe'].append(aresult['cpe'][0].replace(":", "_"))
-            newstruct['ip'].append(aresult['ip'])
-            newstruct['hostname'].append(aresult['hostname'])
-            newstruct['osvendor'].append(aresult['vendor'])
-            newstruct['osname'].append(aresult['name'])
-            newstruct['ostype'].append(aresult['type'])
-            newstruct['osgen'].append(aresult['osgen'])
-            newstruct['osfamily'].append(aresult['osfamily'])
-            newstruct['osaccuracy'].append(aresult['accuracy'])
+            hostname = aresult['hostname']
+            newstruct[hostname]['cpe'] = aresult['cpe'][0].replace(":", "_")
+            newstruct[hostname]['ip'] = aresult['ip']
+            newstruct[hostname]['hostname'] = hostname
+            newstruct[hostname]['osvendor'] = aresult['vendor']
+            newstruct[hostname]['osname'] = aresult['name']
+            newstruct[hostname]['ostype'] = aresult['type']
+            newstruct[hostname]['osgen'] = aresult['osgen']
+            newstruct[hostname]['osfamily'] = aresult['osfamily']
+            newstruct[hostname]['osaccuracy'] = aresult['accuracy']
         else:
             print(json.dumps(aresult, indent=4))
             osfailure.append(aresult)

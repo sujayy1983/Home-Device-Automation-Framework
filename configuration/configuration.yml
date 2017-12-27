@@ -9,7 +9,7 @@
 HOME_NETWORK: "192.168.1.0/24"
 
 CACHEPERMS:
-  user: 'pi' 
+  user: 'pi'
   group: 'pi'
 
 DEVICEDETECT:

@@ -47,12 +47,23 @@ class HomeNetwork(object):
         try:
             connection, tablename = HomeNetwork.get_connection_info()
             query = "SELECT * from {table}".format(table=tablename)
-            dataframe = pandas.read_sql_query(query, connection)
 
-            newdf = pandas.DataFrame(rowinfo)
-            out = dataframe.combine_first(newdf)
-            print(out.head())
-            out.to_sql(tablename, connection, index=False, if_exists='replace')
+            dbdata = pandas.read_sql_query(query, connection).to_json(orient='records')
+            dbdata = json.loads(dbdata)
+            easylkup = {}
+            for entry in dbdata:
+                easylkup[entry['hostname']] = entry
+
+            dfdata = []
+            for hostname in rowinfo:
+                if hostname in easylkup:
+                    easylkup[hostname].update(rowinfo[hostname])
+                    dfdata.append(easylkup[hostname])
+                else:
+                    dfdata.append(rowinfo[hostname])
+
+            dataframe = pandas.DataFrame(dfdata)
+            dataframe.to_sql(tablename, connection, index=False, if_exists='replace')
             return True
         except:
             print(traceback.format_exc())
@@ -99,7 +110,7 @@ class HomeNetwork(object):
         """ Faster network discovery with scapy """
         basey = 960/2
         basex = 600/2
-        newstruct = defaultdict(list)
+        newstruct = defaultdict(dict)
         homenw = Utility.read_configuration(config="HOME_NETWORK")
         alive, _ = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=homenw),\
                                 timeout=2, verbose=0)
@@ -117,15 +128,15 @@ class HomeNetwork(object):
             ycoord = random.randint(0, 2*basey)
 
             if not ipaddr.endswith('.1'):
-                newstruct['gateway'].append("N")
+                newstruct[hostname]['gateway'] = "N"
             else:
-                newstruct['gateway'].append("Y")
+                newstruct[hostname]['gateway'] = "Y"
 
-            newstruct['ip'].append(ipaddr)
-            newstruct['mac'].append(mac)
-            newstruct['hostname'].append(hostname)
-            newstruct['x'].append(xcoord)
-            newstruct['y'].append(ycoord)
+            newstruct[hostname]['ip'] = ipaddr
+            newstruct[hostname]['mac'] = mac
+            newstruct[hostname]['hostname'] = hostname
+            newstruct[hostname]['x'] = xcoord
+            newstruct[hostname]['y'] = ycoord
         #---------------------------------#
         # New implementation with sqlite3 #
         #---------------------------------#
