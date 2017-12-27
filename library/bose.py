@@ -23,9 +23,13 @@ class Bose(object):
     __PERCENT_MATCH__ = 0
 
     @staticmethod
-    def discover_boseip(bosecfg):
+    def discover_boseip(bosecfg=None):
         """ Discover IP based on configuration settings """
         ipmatch = hostmatch = None
+
+        if not bosecfg:
+            bosecfg = Utility.read_configuration(config="BOSESOUNDTOUCH")
+
         lookupstrings = bosecfg["hostdiscovery"]
 
         for device in HomeNetwork.get_allhosts():
@@ -56,13 +60,10 @@ class Bose(object):
     def get_bose_info():
         """ Get BOSE info """
         baseurl = Bose.get_bose_baseurl("info")
-        print("Base URL: {}".format(baseurl))
         inforequest = requests.get(baseurl)
-        print("Requested info from device.")
         inforesponse = xml.dom.minidom.parseString(inforequest.text)
         inforesponse_pretty = inforesponse.toprettyxml()
         jsdata = xmltodict.parse(inforesponse_pretty, xml_attribs=True)
-        print(json.dumps(jsdata, indent=4))
         return jsdata
 
     @staticmethod
@@ -88,4 +89,3 @@ class Bose(object):
     def check_presets():
         """ Select options """
         pass
-

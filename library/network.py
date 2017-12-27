@@ -9,6 +9,7 @@ import socket
 import random
 import sqlite3
 import traceback
+from shutil import chown
 from collections import defaultdict
 
 import pandas
@@ -19,24 +20,24 @@ class HomeNetwork(object):
     """ Home network and other properties discovery """
 
     @staticmethod
-    def initializetable(cfg=None):
+    def initializetable(perms=False):
         """ Initialize a sqlite3 device table """
-
-        if not cfg:
-            cfg = Utility.read_configuration(config="DEVICEDETECT")
-
-        connection = sqlite3.connect(cfg["devicedb"])
-        dataframe = pandas.read_csv("templates/devicetable.csv")
-        dataframe.to_sql(cfg["tablename"], connection, index=False, if_exists='replace')
-
-    @staticmethod
-    def get_connection_info(init=False):
-        """ Get connection info and table name """
         cfg = Utility.read_configuration(config="DEVICEDETECT")
 
-        if init:
-            HomeNetwork.initializetable(cfg=cfg)
-            
+        if not os.path.exists(cfg["devicedb"]):
+            connection = sqlite3.connect(cfg["devicedb"])
+            dataframe = pandas.read_csv("templates/devicetable.csv")
+            dataframe.to_sql(cfg["tablename"], connection, index=False,\
+                if_exists='replace')
+        
+        if perms:
+            permscfg = Utility.read_configuration(config="CACHEPERMS")
+            chown(cfg["devicedb"], permscfg["user"], permscfg["group"])
+
+    @staticmethod
+    def get_connection_info():
+        """ Get connection info and table name """
+        cfg = Utility.read_configuration(config="DEVICEDETECT")
         return sqlite3.connect(cfg["devicedb"]), cfg["tablename"]
 
     @staticmethod
@@ -44,7 +45,7 @@ class HomeNetwork(object):
         """ sqlite into dataframe """
 
         try:
-            connection, tablename = HomeNetwork.get_connection_info(init)
+            connection, tablename = HomeNetwork.get_connection_info()
             query = "SELECT * from {table}".format(table=tablename)
             dataframe = pandas.read_sql_query(query, connection)
 

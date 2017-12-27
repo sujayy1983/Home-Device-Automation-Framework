@@ -8,6 +8,7 @@ Description: Run this program from cron on a periodic basis and cache the data.
 import os
 import json
 import traceback
+
 from glob import glob
 from collections import defaultdict
 from multiprocessing import Pool
@@ -15,7 +16,6 @@ from multiprocessing import Pool
 import nmap
 import pysftp
 from library.network import HomeNetwork
-from library.Utility import Utility
 
 
 def oshandler(iphost):
@@ -101,8 +101,6 @@ def osdetection():
             osfailure.append(aresult)
 
     HomeNetwork.add_update_rows(newstruct)
-    Utility.cache('osdetection', 'write', newstruct)
-    Utility.cache('osdetectfailed', 'write', osfailure)
 
 
 def complete_setup():
@@ -111,7 +109,9 @@ def complete_setup():
     for afile in glob("static/data/networkdata-*.json"):
         os.remove(afile)
 
+
 if __name__ == '__main__':
+    HomeNetwork.initializetable(perms=True)
     HomeNetwork.create_tree()
     osdetection()
     complete_setup()

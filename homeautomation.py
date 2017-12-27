@@ -184,8 +184,8 @@ def bosesoundtouch(key=None):
         if key != None:
             Bose.change_key_attr(key)
 
+        Bose.discover_boseip()
         return render_template('bosesoundtouch.html', \
-                display=json.dumps(Bose.get_bose_info(), indent=4),\
                 bosehostname=Bose.__HOSTNAME__,\
                 boseip=Bose.__IP__)
     except OSError as err:
@@ -268,7 +268,8 @@ def aiycontrols(service=None, action=None):
 @application.route('/d3display')
 def d3display():
     """ Discover home network """
-    filename = "networkdata-{}.json".format(datetime.now())
+    timestamp = str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".","-")
+    filename = "networkdata-{}.json".format(timestamp)
     jsonfile = "/static/data/{0}".format(filename)
     HomeNetwork.create_d3json(jsonfile=jsonfile)
     return render_template('d3homedevices.html', jsonfile=jsonfile)

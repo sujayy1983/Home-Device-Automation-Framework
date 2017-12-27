@@ -1,6 +1,6 @@
 {% extends "basetemplate.html" %}
 
-{% block title %}Philips lights{% endblock %}
+{% block title %}AIY Google Voice kit{% endblock %}
 
 {% block head %}
   {{ super() }}
@@ -75,8 +75,13 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Google assistant</label>
                 <!--div class="btn-group btn-group-justified col-sm-4"-->
-                <a class="btn col-sm-2" href="/aiy/gassistant/start">START</a>
-                <a class="btn col-sm-2" href="/aiy/gassistant/stop">STOP</a>
+                {% if (status == "Available") %}
+                    <a class="btn col-sm-2" href="/aiy/gassistant/start">START</a>
+                    <a class="btn col-sm-2" href="/aiy/gassistant/stop">STOP</a>
+                {%else%}
+                    <a class="btn disabled col-sm-2" href="/aiy/gassistant/start">START</a>
+                    <a class="btn disabled col-sm-2" href="/aiy/gassistant/stop">STOP</a>
+                {%endif%}
                 <!--/div-->
             </div>
             {% if msg %}
