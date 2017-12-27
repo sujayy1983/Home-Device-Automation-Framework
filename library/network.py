@@ -27,8 +27,8 @@ class HomeNetwork(object):
         if not os.path.exists(cfg["devicedb"]):
             connection = sqlite3.connect(cfg["devicedb"])
             dataframe = pandas.read_csv("templates/devicetable.csv")
-            dataframe.to_sql(cfg["tablename"], connection, index=False,\
-                if_exists='replace')
+            dataframe.to_sql(cfg["tablename"], connection, index=True,\
+                index_label='hostname')
         
         if perms:
             permscfg = Utility.read_configuration(config="CACHEPERMS")

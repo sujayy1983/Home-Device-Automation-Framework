@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
+    </head>
+    <body>
+        
+    <div id="multibarchart"><svg style="width:1200px;height:500px;"></svg></div>
+
+
+    <script>
+
+
+
+        data_multibarchart=[{"values": [{"x": "gonzalo castro", "y": 641}, {"x": "dimitri payet", "y": 626}, {"x": "juanfran", "y": 608}, {"x": "mesut ozil", "y": 568}, {"x": "lionel messi", "y": 522}, {"x": "marek hamsik", "y": 503}, {"x": "ryad boudebouz", "y": 494}, {"x": "roberto trashorras", "y": 464}, {"x": "angel di maria", "y": 458}, {"x": "kevin de bruyne", "y": 445}, {"x": "eden hazard", "y": 444}, {"x": "miralem pjanic", "y": 440}, {"x": "koke", "y": 429}, {"x": "mathieu valbuena", "y": 423}, {"x": "marcelo", "y": 423}], "key": "player2", "yAxis": "1"}];
+
+    nv.addGraph(function() {
+        var chart = nv.models.multiBarChart();
+
+        chart.margin({top: 30, right: 60, bottom: 20, left: 60});
+
+        var datum = data_multibarchart;
+
+
+
+
+
+            chart.yAxis
+                .tickFormat(d3.format(',.2f'));
+
+
+      chart.showLegend(true);
+
+
+
+        
+
+
+        d3.select('#multibarchart svg')
+            .datum(datum)
+            .transition().duration(500)
+            .attr('width', 1200)
+            .attr('height', 500)
+            .call(chart);
+
+
+    });
+
+
+
+
+    </script>
+
+    </body>
+</html>

@@ -33,11 +33,10 @@ class Aiy(object):
 
     def start(self, service):
         """ Start a program """
-        print("Start service: {}@{}".format(self.rootdir, service))
         os.system("sudo systemctl start gassistant.service")
         if service not in self.available:
             raise Exception("Invalid service - {0}".format(service))
-        elif  self.available[service] != "":
+        elif  self.available[service] != "Available":
             raise Exception("Service - [{}] not installed".format(service))
 
         for availservice in self.available:
@@ -46,10 +45,9 @@ class Aiy(object):
 
     def stop(self, service):
         """ Stop a program """
-        print("Start service: {}@{}".format(self.rootdir, service))
-        os.system("sudo systemctl stop gassistant.service")
         if service in self.activeprocesses:
-            print("Start service: {}".format(service))
+            os.system("sudo systemctl stop gassistant.service")
+            del self.activeprocesses[service]
 
     def process_request(self, service, action):
         """ Process requests for action to be taken on

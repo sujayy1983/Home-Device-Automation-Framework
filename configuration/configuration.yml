@@ -9,12 +9,12 @@
 HOME_NETWORK: "192.168.1.0/24"
 
 CACHEPERMS:
-  user: "srsrinivas" #"pi"
-  group: "admin"     #"pi"
+  user: 'pi' 
+  group: 'pi'
 
 DEVICEDETECT:
   devicedb: 'cache/devices.db'
-  tablename: "devicetable"
+  tablename: 'devicetable'
 
 PHILLIPS:
   username: "wBFC5TMhuJkeg7EH0BIpbOejQTmivI7tCw7NZYZi"
