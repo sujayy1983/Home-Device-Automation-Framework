@@ -7,10 +7,10 @@ Description: Home network automation micro web framework.
 ### What does this micro app offer ?
 
 1. Home network discovery and caching 
-(i) D3Js Forcelayout visualization of discovered devices. Hover mouse over any node to view
+  - D3Js Forcelayout visualization of discovered devices. Hover mouse over any node to view
        IP address and hostname of device.
        ![Discovered home network](/static/img/samplenw.png)
-(ii) Caching of discovered info that can be leveraged by other parts of automation
+  - Caching of discovered info that can be leveraged by other parts of automation
         Current logic leverages cached data by looking at hostname for key match.
 
 2. Basic Hue Light controls - Already configured lights are discovered and displayed on the UI
@@ -23,7 +23,13 @@ Description: Home network automation micro web framework.
    Note: Few entries are intentionally removed for security reasons.
    ![OS detection of home devices](/static/img/sampleosdetect.png)
 
-5. Initial analysis of Kaggle labelled datasets
+5. Assuming that this app is running on a Raspberry Pi and is running 24*7. You'll need to configure audio in case you havent configured it yet. To use this app as doorbell, place a few mp3 files in a local mp3 directory and install the following
+```
+sudo apt-get install -y alsa-utils  mpg321 lame
+sudo modprobe snd_bcm2835
+```
+
+6. Initial analysis of Kaggle labelled datasets
    This tells us maximum occurrences per column
    Step1: Upload a csv dataset using upload options.
    Step2: Select a dataset and select top occurrence count in rows.

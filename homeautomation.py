@@ -285,7 +285,7 @@ def voicehtml5(mp3 = None):
 
     if mp3:
         mp3song = 'mp3/{}'.format(mp3)
-        os.system('omxplayer -o local {0}'.format(mp3song))
+        os.system('mpg321 {0}'.format(mp3song))
         
     return render_template('voice.html', doorbell=doorbell)
 
