@@ -275,12 +275,19 @@ def d3display():
     HomeNetwork.create_d3json(jsonfile=jsonfile)
     return render_template('d3homedevices.html', jsonfile=jsonfile)
 
-
 @application.route('/voicemsg')
-def voicehtml5():
+@application.route('/voicemsg/<mp3>', methods=['GET', "POST"])
+def voicehtml5(mp3 = None):
     """ Voice via html5 """
-    webbrowser.open("https://www.youtube.com/watch?v=aeFfzf0KFOw")
-    return render_template('voice.html')
+    
+    doorbell = glob("mp3/*")
+    doorbell = [bell.replace("mp3/", "") for bell in doorbell]
+
+    if mp3:
+        mp3song = 'mp3/{}'.format(mp3)
+        os.system('omxplayer -o local {0}'.format(mp3song))
+        
+    return render_template('voice.html', doorbell=doorbell)
 
 
 @application.route('/')
@@ -294,7 +301,7 @@ if __name__ == '__main__':
     #----------------#
     # Initialization #
     #----------------#
-    for directory in ['output', 'cache', 'datasets', 'logs', 'static/data']:
+    for directory in ['output', 'cache', 'datasets', 'logs', 'static/data', "mp3"]:
         if not os.path.exists(directory):
             os.mkdir(directory)
 

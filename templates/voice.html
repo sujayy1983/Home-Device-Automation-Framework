@@ -64,24 +64,23 @@
 {% endblock %}
 
 {% block content %}
-<font color="white">
-    <h2>Voice as door bell</h2>
-</font>
+<form method="POST"></form>
+    <div class="container">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Door bell
+            </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading"> Voice as door bell</div>
-    <div class="panel-body" >
-        <div class="container">
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Door bell</label>
-                <a class="btn col-sm-2" href="/voicemsg">Door bell</a>
+            <div class="panel-body">
+                <div class="form-group row">
+                    <div class="btn-group btn-group-justified">
+                        {% for item in doorbell %}
+                        <a class="btn" href="/voicemsg/{{item}}">{{item}}</a>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-            {% if msg %}
-            <div class="alert alert-danger">
-                <strong>Service failure!</strong> {{msg}}
-            </div>
-            {% endif %}
         </div>
     </div>
-</div>
+</form>
 {% endblock %}

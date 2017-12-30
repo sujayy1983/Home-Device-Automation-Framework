@@ -14,3 +14,4 @@ nohup.out
 configuration/haconf.yml
 cache/*.db
 apptest.py
+mp3/*.*
