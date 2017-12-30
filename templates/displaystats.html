@@ -8,40 +8,42 @@
 {% endblock %}
 
 {% block content %}
-    <h2 align="center">Data analysis - Web Application</h2>
+<h2 align="center">Data analysis - Web Application</h2>
 
-    <div class="container">
-        <div class="panel panel-info">
-            <div class="panel-heading">Data analysis - Statistics</div>
-                <div class="panel-body">
+<div class="container">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            Data analysis - Statistics
+        </div>
+        
+        <div class="panel-body">
+            <table class="table table-inverse" data-toggle="table" data-search="true" data-filter-control="true" data-show-export="true" data-click-to-select="true">
+                <thead>
+                    <tr>
+                    {% for column in columns %}
+                        <th>{{column}}</th>
+                    {% endfor %}
+                    </tr>
+                </thead>
 
-                <table class="table table-inverse" data-toggle="table" data-search="true" data-filter-control="true" data-show-export="true" data-click-to-select="true">
-                    <thead>
-                        <tr>
-                        {% for column in columns %}
-                            <th>{{column}}</th>
-                        {% endfor %}
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                    {% for row in rows %}
-                        <tr>
-                        {% for elem in row %}
-                            <td>{{elem}}</td>
-                        {%endfor%}
-                        </tr>
+                <tbody>
+                {% for row in rows %}
+                    <tr>
+                    {% for elem in row %}
+                        <td>{{elem}}</td>
                     {%endfor%}
-                    </tbody>
-
-                </table>
-
-                </div>
-            <div class="panel-footer">@author: sujayyendhiren ramarao srinivasamurthi</div>
+                    </tr>
+                {%endfor%}
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer">
+            @author: sujayyendhiren ramarao srinivasamurthi
         </div>
     </div>
+</div>
 
-    <div class="container">
-        <iframe srcdoc="{{barchart}}" width="1400" height="600"></iframe>
-    </div>
+<div class="container">
+    <iframe srcdoc="{{barchart}}" width="1400" height="600"></iframe>
+</div>
 {% endblock %}

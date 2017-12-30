@@ -9,6 +9,11 @@ from library.Utility import Utility
 class Aiy(object):
     """ Google voice kit controls """
 
+    #----------------------------#
+    # Currently running services #
+    #----------------------------#
+    __ACTIVESRV__ = {}
+
     def __init__(self):
         """ Initializations and/or discovery """
 
@@ -19,7 +24,6 @@ class Aiy(object):
         # Available service(s) #
         #----------------------#
         self.available = {}
-        self.activeprocesses = {}
 
         #------------------------------#
         # Check if a service available #
@@ -33,21 +37,21 @@ class Aiy(object):
 
     def start(self, service):
         """ Start a program """
-        os.system("sudo systemctl start gassistant.service")
         if service not in self.available:
             raise Exception("Invalid service - {0}".format(service))
         elif  self.available[service] != "Available":
             raise Exception("Service - [{}] not installed".format(service))
 
         for availservice in self.available:
-            if availservice == service and service not in self.activeprocesses:
-                self.activeprocesses[service] = None
+            if availservice == service and service not in Aiy.__ACTIVESRV__:
+                os.system("sudo systemctl start {0}.service".format(service))
+                Aiy.__ACTIVESRV__[service] = None
 
     def stop(self, service):
         """ Stop a program """
-        if service in self.activeprocesses:
-            os.system("sudo systemctl stop gassistant.service")
-            del self.activeprocesses[service]
+        if service in Aiy.__ACTIVESRV__:
+            os.system("sudo systemctl stop {0}.service".format(service))
+            del Aiy.__ACTIVESRV__[service]
 
     def process_request(self, service, action):
         """ Process requests for action to be taken on

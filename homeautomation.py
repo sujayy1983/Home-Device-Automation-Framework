@@ -1,28 +1,28 @@
 """
     Author      : Sujayyendhiren Ramarao Srinivasamurthi
-    Description : Preliminary analysis of Kaggle datasets
+    Description : Home automation with interesting gadgets at home.
+                  Most of them support REST. Some features are based on 
+                  a service running on this host (AIY google voice kit)
+                  and door bell feature leverages speaker on this device.
 """
 
 import os
 import json
 import traceback
-import webbrowser
 from glob import glob
 from datetime import datetime
 
 import flask
 from flask import Flask, render_template, request
-import pandas as pd
-from nvd3 import multiBarChart
 from werkzeug.utils import secure_filename
 
-from library.bose import Bose
 from library.aiy  import Aiy
+from library.bose import Bose
+from library.kaggle import Kaggle
 from library.philips import Philips
 from library.Utility import Utility
 from library.network import HomeNetwork
 
-DATASET = "datasets/{0}"
 UPLOAD_FOLDER = 'datasets'
 ALLOWED_EXTENSIONS = set(['csv'])
 
@@ -30,69 +30,16 @@ application = Flask(__name__)
 application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-def filter_data(dataframe, column, value):
-    """ Process csv data """
-    ##Loop over filters
-    return dataframe[dataframe[column].str.contains(value)]
-
-
-def get_datasets():
-    """ Get datasets """
-    return [elem.split('/')[-1] for elem in glob('datasets/*.csv')]
-
-
-def get_dataframe(dataset):
-    """ Get dataframe from a csv file name"""
-    return pd.read_csv(DATASET.format(dataset), low_memory=False, \
-    encoding="latin1", skipinitialspace=True, error_bad_lines=False)
-
-
-def get_columns(dataset):
-    """ Get columns in a dataset """
-    return get_dataframe(dataset).keys()
-
-
-def get_unique_columnelems(dataset, column, head=15):
-    """ Get a list of column names from a csv file """
-    try:
-        analyze = pd.read_csv(DATASET.format(dataset), \
-                  skipinitialspace=True)[column].value_counts(\
-                                        ).head(head).to_frame()
-        analyze.reset_index(inplace=True)
-        analyze.columns = [column, 'OccurrenceCnt']
-        return analyze
-    except OSError as err:
-        print("OS error: {0}".format(err))
-    except:
-        print(traceback.format_exc())
-        return None
-
-
-def get_barchart(formatted):
-    """ Create a bar chart and return html content """
-
-    chart = multiBarChart(width=1200, height=500, x_axis_format=None)
-    xdata = formatted[formatted.keys()[0]].values.tolist()
-    ydata1 = formatted[formatted.keys()[1]].values.tolist()
-    chart.add_serie(name=formatted.keys()[0], y=ydata1, x=xdata)
-    chart.buildhtml()
-
-    with open("test.html", 'w') as fil:
-        fil.write(chart.htmlcontent)
-
-    return chart.htmlcontent
-
-
 @application.route('/filter', methods=['POST'])
 @application.route('/filter/<options>', methods=['POST'])
 def filter_columns(options=None):
     """" Filters various parameters in a dataset """
-    if options != None:
 
+    if options != None:
         try:
-            result = get_unique_columnelems(request.form['dataset'], \
+            result = Kaggle.get_unique_columnelems(request.form['dataset'], \
                        request.form['column'], head=int(request.form['rows']))
-            barchart = get_barchart(result)
+            barchart = Kaggle.get_barchart(result)
             formatted = result.values.tolist()
             return render_template('displaystats.html',\
                     columns=result.keys(), rows=formatted, barchart=barchart)
@@ -102,7 +49,7 @@ def filter_columns(options=None):
             print(traceback.format_exc())
 
     elif filter == 'withvalue':
-        return filter_data(get_dataframe(request.form['dataset']), \
+        return Kaggle.filter_data(Kaggle.get_dataframe(request.form['dataset']), \
                 request.form['column'], request.form['value']).to_html()
 
     else:
@@ -113,11 +60,11 @@ def filter_columns(options=None):
 def retrieve_columns():
     """ Retrieve columns in a dataset """
     dataset = request.form['dataset']
-    datasets = sorted(get_datasets(), key=lambda s: s.lower())
+    datasets = sorted(Kaggle.get_datasets(), key=lambda s: s.lower())
 
     datasets.insert(0, datasets.pop(datasets.index(dataset)))
     return render_template('dataanalysis.html', dataset=dataset,\
-                datasets=datasets, columns=get_columns(dataset))
+                datasets=datasets, columns=Kaggle.get_columns(dataset))
 
 
 @application.route("/upload", methods=["POST"])
@@ -132,7 +79,7 @@ def upload():
             afile.save(os.path.join(application.config['UPLOAD_FOLDER'],\
                                     secure_filename(afile.filename)))
     return render_template('welcome.html', hue={},\
-                datasets=get_datasets(), columns=[])
+                datasets=Kaggle.get_datasets(), columns=[])
 
 
 @application.route('/test')
@@ -201,7 +148,7 @@ def bosesoundtouch(key=None):
 def view_datasets():
     """ Welcome screen with a list of datasets to choose from. """
     return render_template('dataanalysis.html', hue={},\
-                            datasets=sorted(get_datasets(),\
+                            datasets=sorted(Kaggle.get_datasets(),\
                             key=lambda s: s.lower()), columns=[])
 
 
@@ -269,7 +216,7 @@ def aiycontrols(service=None, action=None):
 @application.route('/d3display')
 def d3display():
     """ Discover home network """
-    timestamp = str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".","-")
+    timestamp = str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
     filename = "networkdata-{}.json".format(timestamp)
     jsonfile = "/static/data/{0}".format(filename)
     HomeNetwork.create_d3json(jsonfile=jsonfile)
@@ -277,16 +224,16 @@ def d3display():
 
 @application.route('/doorbell')
 @application.route('/doorbell/<mp3>', methods=['GET', "POST"])
-def voicehtml5(mp3 = None):
+def voicehtml5(mp3=None):
     """ Voice via html5 """
-    
+
     doorbell = glob("mp3/*")
     doorbell = [bell.replace("mp3/", "") for bell in doorbell]
 
     if mp3:
         mp3song = 'mp3/{}'.format(mp3)
         os.system('mpg321 {0}'.format(mp3song))
-        
+
     return render_template('doorbell.html', doorbell=doorbell)
 
 
@@ -298,12 +245,22 @@ def welcome():
 
 if __name__ == '__main__':
 
-    #----------------#
-    # Initialization #
-    #----------------#
-    for directory in ['output', 'cache', 'datasets', 'logs', 'static/data', "mp3"]:
+    #----------------------------#
+    # Application Initialization #
+    #----------------------------#
+    appcfg = Utility.read_configuration(config="APPLICATION")
+
+    for directory in appcfg['directories']:
         if not os.path.exists(directory):
             os.mkdir(directory)
 
     HomeNetwork.initializetable()
-    application.run(host="0.0.0.0", processes=8)
+
+    try:
+        application.run(host="0.0.0.0", port=appcfg['port'], \
+            processes=appcfg['processes'])
+    except:
+        alternateport = 5000
+        print("Starting on {0}".format(alternateport))
+        application.run(host="0.0.0.0", port=alternateport,\
+            processes=appcfg['processes'])

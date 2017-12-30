@@ -8,6 +8,17 @@
 ---
 HOME_NETWORK: "192.168.1.0/24"
 
+APPLICATION:
+  port: 80
+  processes: 8
+  directories:
+    - 'output'
+    - 'cache'
+    - 'datasets'
+    - 'logs'
+    - 'static/data'
+    - 'mp3'
+
 CACHEPERMS:
   user: 'pi'
   group: 'pi'
