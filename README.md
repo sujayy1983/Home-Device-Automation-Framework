@@ -23,7 +23,7 @@ Description: Home network automation micro web framework.
    Note: Few entries are intentionally removed for security reasons.
    ![OS detection of home devices](/static/img/sampleosdetect.png)
 
-5. Assuming that this app is running on a Raspberry Pi and is running 24*7. You'll need to configure audio in case you havent configured it yet. To use this app as doorbell, place a few mp3 files in a local mp3 directory and install the following
+5. Assuming that the app is running on a Raspberry Pi and is running 24*7. You'll need to configure audio in case it isnt configured yet. This app can be used as a Wifi operated doorbell by accessing this app once we are in home Wifi range from a handheld device and triggering one of the doorbell like mp3s placed on the Pi.
 ```
 sudo apt-get install -y alsa-utils  mpg321 lame
 sudo modprobe snd_bcm2835
@@ -42,33 +42,12 @@ sudo modprobe snd_bcm2835
 
 
 ### Configuring this micro app
-(i) Add more configurable parameters in configuration/configuration.yml
-(ii) As we add more features we will cache data into the directory cache/*.cache
-(iii) If we are interested in running this app in two of the raspberry pis at home and make device detection more
+  - Add more configurable parameters in configuration/configuration.yml
+  - As we add more features we will cache data into the directory cache/*.cache
+  - If we are interested in running this app in two of the raspberry pis at home and make device detection more
       reliable then there is an evolving feature that can sync device detection from across secondary devices via sftp.
       for setting that feature create a file "configuration/haconf.yml" and fill in username and password of primary 
       Raspberry pi.
-
-```
----
-
-#------------------------------------------------------#
-# HA configuration for Primary-Secondary Configuration #
-# -----------------------------------------------------#
-
-CLUSTERINFO:
-  primary: "raspberrypi.local"
-  others: ["raspberrypi-second.local"]
-
-CREDENTIALS:
-  username: <username> 
-  password: <password> 
-
-DIRECTORY:
-  syncdir: "<absolute-path>/Home-Device-Automation-Framework/cache"
-  getfiles: ["devices-{0}.cache", "osdetection-{0}.cache"]
-```
-
 
 ### Install and run this application
 

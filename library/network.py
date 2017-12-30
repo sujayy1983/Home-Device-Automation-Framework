@@ -127,16 +127,20 @@ class HomeNetwork(object):
             xcoord = random.randint(0, 2*basex)
             ycoord = random.randint(0, 2*basey)
 
-            if not ipaddr.endswith('.1'):
-                newstruct[hostname]['gateway'] = "N"
-            else:
-                newstruct[hostname]['gateway'] = "Y"
-
             newstruct[hostname]['ip'] = ipaddr
             newstruct[hostname]['mac'] = mac
             newstruct[hostname]['hostname'] = hostname
             newstruct[hostname]['x'] = xcoord
             newstruct[hostname]['y'] = ycoord
+
+            if not ipaddr.endswith('.1'):
+                newstruct[hostname]['gateway'] = "N"
+            else:
+                newstruct[hostname]['gateway'] = "Y"
+                newstruct[hostname]['x'] = 0
+                newstruct[hostname]['y'] = 0
+
+
         #---------------------------------#
         # New implementation with sqlite3 #
         #---------------------------------#

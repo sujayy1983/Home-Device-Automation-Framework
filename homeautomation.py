@@ -275,8 +275,8 @@ def d3display():
     HomeNetwork.create_d3json(jsonfile=jsonfile)
     return render_template('d3homedevices.html', jsonfile=jsonfile)
 
-@application.route('/voicemsg')
-@application.route('/voicemsg/<mp3>', methods=['GET', "POST"])
+@application.route('/doorbell')
+@application.route('/doorbell/<mp3>', methods=['GET', "POST"])
 def voicehtml5(mp3 = None):
     """ Voice via html5 """
     
@@ -287,7 +287,7 @@ def voicehtml5(mp3 = None):
         mp3song = 'mp3/{}'.format(mp3)
         os.system('mpg321 {0}'.format(mp3song))
         
-    return render_template('voice.html', doorbell=doorbell)
+    return render_template('doorbell.html', doorbell=doorbell)
 
 
 @application.route('/')

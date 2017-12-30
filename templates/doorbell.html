@@ -66,21 +66,11 @@
 {% block content %}
 <form method="POST"></form>
     <div class="container">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                Door bell
-            </div>
-
-            <div class="panel-body">
-                <div class="form-group row">
-                    <div class="btn-group btn-group-justified">
-                        {% for item in doorbell %}
-                        <a class="btn" href="/voicemsg/{{item}}">{{item}}</a>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+        {% for item in doorbell %}
+        <div class="btn-group btn-group-justified">
+            <a class="btn" href="/doorbell/{{item}}">{{item}}</a>
         </div>
+        {% endfor %}
     </div>
 </form>
 {% endblock %}
