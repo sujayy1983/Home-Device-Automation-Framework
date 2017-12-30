@@ -147,6 +147,7 @@ class HomeNetwork(object):
         """ Create tree from sqlite data """
         gateway = None
         devices = defaultdict(list)
+        colors = {}
 
         jsdata = HomeNetwork.read_sqlite3_current(jsondata=True)
 
@@ -155,13 +156,23 @@ class HomeNetwork(object):
         for anode in devices["nodes"]:
             if anode["gateway"] == "Y":
                 gateway = anode["ip"]
-                anode["color"] = "white"
+                anode["color"] = "red"
                 continue
+            
+            if "osvendor" in anode and anode["osvendor"] not in colors:
+                red = 0
+                green = random.randint(-100, 255)
+                blue = random.randint(-25, 236)
+                colors[anode["osvendor"]] = "rgb({}, {}, {})".format(red, green, blue)
 
-            red = random.randint(0, 5000)%254
-            green = random.randint(0, 700)%254
-            blue = random.randint(0, 9000)%254
-            anode["color"] = "rgb({}, {}, {})".format(red, green, blue)
+            elif "osvendor" not in anode:
+                anode["osvendor"] = "default"
+                red = 0
+                green = random.randint(0, 2200)
+                blue = random.randint(0, 9600)%255
+                colors[anode["osvendor"]] = "rgb({}, {}, {})".format(red, green, blue)
+
+            anode["color"] = colors[anode["osvendor"]]
             devices["links"].append({"source":  "", "target": anode["ip"]})
 
         for link in devices["links"]:

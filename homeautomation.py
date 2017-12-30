@@ -6,6 +6,7 @@
 import os
 import json
 import traceback
+import webbrowser
 from glob import glob
 from datetime import datetime
 
@@ -187,13 +188,13 @@ def bosesoundtouch(key=None):
         Bose.discover_boseip()
         return render_template('bosesoundtouch.html', \
                 bosehostname=Bose.__HOSTNAME__,\
-                boseip=Bose.__IP__)
+                boseip=Bose.__IP__,\
+                status='' if Bose.__IP__ else "disabled")
     except OSError as err:
-        print("OS error: {0}".format(err))
-        return render_template('failure.html', message="OS error: {0}".format(err))
+        return render_template('failure.html', message="OS error -{0}".format(err))
     except:
-        print(traceback.format_exc())
-        return render_template('failure.html', message="Soundtouch detection failed")
+        return render_template('failure.html',\
+            message="Soundtouch detection failed - {0}".format(traceback.format_exc()))
 
 
 @application.route('/datanalysis')
@@ -273,6 +274,13 @@ def d3display():
     jsonfile = "/static/data/{0}".format(filename)
     HomeNetwork.create_d3json(jsonfile=jsonfile)
     return render_template('d3homedevices.html', jsonfile=jsonfile)
+
+
+@application.route('/voicemsg')
+def voicehtml5():
+    """ Voice via html5 """
+    webbrowser.open("https://www.youtube.com/watch?v=aeFfzf0KFOw")
+    return render_template('voice.html')
 
 
 @application.route('/')
