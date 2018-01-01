@@ -217,6 +217,14 @@ class HomeNetwork(object):
         
         cinfo = Utility.read_configuration(configfile="haconf.yml", config="HACREDS")
         
+        Utility.hostname()
+
+        #----------------------------------------------#
+        # On master we do not need a sync on itself :) #
+        #----------------------------------------------#
+        if cinfo["host"].split('.')[0] == Utility.hostname():
+            return
+
         with pysftp.Connection(**cinfo) as sftp:
             filecfg = Utility.read_configuration(configfile="haconf.yml", config="FILETX")
 

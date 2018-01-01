@@ -15,6 +15,8 @@ from multiprocessing import Pool
 
 import nmap
 import pysftp
+
+from highlander import one
 from library.network import HomeNetwork
 
 
@@ -112,9 +114,13 @@ def complete_setup():
 
     HomeNetwork.hasync()
 
-
-if __name__ == '__main__':
+@one()
+def entrypoint():
+    """ Runs only a single instance of a process """
     HomeNetwork.initializetable(perms=True)
     HomeNetwork.create_tree()
     osdetection()
     complete_setup()
+
+if __name__ == '__main__':
+    entrypoint()
