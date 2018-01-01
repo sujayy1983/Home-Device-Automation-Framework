@@ -110,6 +110,8 @@ def complete_setup():
     for afile in glob("static/data/networkdata-*.json"):
         os.remove(afile)
 
+    HomeNetwork.hasync()
+
 
 if __name__ == '__main__':
     HomeNetwork.initializetable(perms=True)

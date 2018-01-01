@@ -7,9 +7,11 @@ import os
 import json
 import socket
 import random
+import pysftp
 import sqlite3
 import traceback
 from shutil import chown
+from datetime import datetime
 from collections import defaultdict
 
 import pandas
@@ -27,18 +29,27 @@ class HomeNetwork(object):
         if not os.path.exists(cfg["devicedb"]):
             connection = sqlite3.connect(cfg["devicedb"])
             dataframe = pandas.read_csv("templates/devicetable.csv")
-            dataframe.to_sql(cfg["tablename"], connection, index=True,\
-                index_label='hostname')
+            dataframe.to_sql(cfg["tablename"], connection, index=False)
         
         if perms:
             permscfg = Utility.read_configuration(config="CACHEPERMS")
             chown(cfg["devicedb"], permscfg["user"], permscfg["group"])
 
     @staticmethod
-    def get_connection_info():
+    def get_connection_info(haconf=False):
         """ Get connection info and table name """
         cfg = Utility.read_configuration(config="DEVICEDETECT")
-        return sqlite3.connect(cfg["devicedb"]), cfg["tablename"]
+
+        if haconf:
+            from glob import glob
+            # Read one other than cfg["devicedb"]
+            dbs = glob("cache/*devices.db")
+
+            for db in dbs:
+                if db != cfg["devicedb"]:
+                    return sqlite3.connect(db), cfg["tablename"]
+        else:
+            return sqlite3.connect(cfg["devicedb"]), cfg["tablename"]
 
     @staticmethod
     def add_update_rows(rowinfo, init=False):
@@ -50,12 +61,24 @@ class HomeNetwork(object):
 
             dbdata = pandas.read_sql_query(query, connection).to_json(orient='records')
             dbdata = json.loads(dbdata)
+
+            #------------#
+            # Slave info #
+            #------------#
+            haconnection, hatablename = HomeNetwork.get_connection_info()
+            query = "SELECT * from {table}".format(table=hatablename)
+
+            hadbdata = pandas.read_sql_query(query, haconnection).to_json(orient='records')
+            hadbdata = json.loads(hadbdata)
+
             easylkup = {}
-            for entry in dbdata:
+            for entry in dbdata + hadbdata:
                 easylkup[entry['hostname']] = entry
 
             dfdata = []
             for hostname in rowinfo:
+                rowinfo[hostname]['datetime'] = str(datetime.now())
+
                 if hostname in easylkup:
                     easylkup[hostname].update(rowinfo[hostname])
                     dfdata.append(easylkup[hostname])
@@ -191,4 +214,13 @@ class HomeNetwork(object):
     @staticmethod
     def hasync():
         """ Sync HA data """
-        pass
+        
+        cinfo = Utility.read_configuration(configfile="haconf.yml", config="HACREDS")
+        
+        with pysftp.Connection(**cinfo) as sftp:
+            filecfg = Utility.read_configuration(configfile="haconf.yml", config="FILETX")
+
+            with sftp.cd(filecfg["parentdir"]):
+                sftp.put(filecfg["send"]["local"], filecfg["send"]["remote"], preserve_mtime=True)
+
+

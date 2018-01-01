@@ -62,7 +62,7 @@ sudo modprobe snd_bcm2835
 ##### Install dependencies on Raspberry Pi - 3
 ```
     Open Terminal
-    sudo apt-get install python3-pandas libdnet nmap
+    sudo apt-get install python3-pandas libdnet nmap libssl-dev
     sudo pip3 install -r requirements.txt
 ```
 

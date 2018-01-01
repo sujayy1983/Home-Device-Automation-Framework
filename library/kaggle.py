@@ -52,7 +52,7 @@ class Kaggle(object):
         except:
             print(traceback.format_exc())
             return None
-    
+
     @staticmethod
     def get_barchart(formatted):
         """ Create a bar chart and return html content """

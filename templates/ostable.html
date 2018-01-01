@@ -29,6 +29,7 @@
                 <th>Vendor</th>
                 <th>OS family</th>
                 <th>OS Gen</th>
+                <th>Last seen</th>
             </tr>
         </thead>
 
@@ -43,6 +44,7 @@
                 <td>{{elem.osvendor}}</td>
                 <td>{{elem.osfamily}}</td>
                 <td>{{elem.osgen}}</td>
+                <td>{{elem.datetime}}</td>
             </tr>
         {%endfor%}
         </tbody>
