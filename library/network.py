@@ -7,14 +7,16 @@ import os
 import json
 import socket
 import random
-import pysftp
+
 import sqlite3
 import traceback
+
 from shutil import chown
 from datetime import datetime
 from collections import defaultdict
 
 import pandas
+import pysftp
 from scapy.all import srp, Ether, ARP
 from library.Utility import Utility
 
@@ -48,8 +50,7 @@ class HomeNetwork(object):
             for db in dbs:
                 if db != cfg["devicedb"]:
                     return sqlite3.connect(db), cfg["tablename"]
-        else:
-            return sqlite3.connect(cfg["devicedb"]), cfg["tablename"]
+        return sqlite3.connect(cfg["devicedb"]), cfg["tablename"]
 
     @staticmethod
     def add_update_rows(rowinfo, init=False):
@@ -65,25 +66,40 @@ class HomeNetwork(object):
             #------------#
             # Slave info #
             #------------#
-            haconnection, hatablename = HomeNetwork.get_connection_info()
+            haconnection, hatablename = HomeNetwork.get_connection_info(haconf=True)
             query = "SELECT * from {table}".format(table=hatablename)
 
             hadbdata = pandas.read_sql_query(query, haconnection).to_json(orient='records')
             hadbdata = json.loads(hadbdata)
 
             easylkup = {}
+            #----------------#
+            # Pre-processing #
+            #----------------#
+            if type(hadbdata) is not list:
+                hadbdata = []
+
             for entry in dbdata + hadbdata:
-                easylkup[entry['hostname']] = entry
+                easylkup[entry['hostname'].lower()] = entry
 
             dfdata = []
             for hostname in rowinfo:
                 rowinfo[hostname]['datetime'] = str(datetime.now())
+                rowinfo[hostname]['status'] = 'Device Up'
 
-                if hostname in easylkup:
-                    easylkup[hostname].update(rowinfo[hostname])
-                    dfdata.append(easylkup[hostname])
+                if hostname.lower() in easylkup:
+                    easylkup[hostname.lower()].update(rowinfo[hostname])
+                    dfdata.append(easylkup[hostname.lower()])
+                    del easylkup[hostname.lower()]
                 else:
                     dfdata.append(rowinfo[hostname])
+
+            #----------------------------------#
+            # Devices not discovered this time #
+            #----------------------------------#
+            for hostname in easylkup:
+                rowinfo[hostname]['status'] = 'Device not discovered'
+                dfdata.append(easylkup[hostname])
 
             dataframe = pandas.DataFrame(dfdata)
             dataframe.to_sql(tablename, connection, index=False, if_exists='replace')
@@ -185,7 +201,7 @@ class HomeNetwork(object):
                 gateway = anode["ip"]
                 anode["color"] = "red"
                 continue
-            
+
             if "osvendor" in anode and anode["osvendor"] not in colors:
                 red = 0
                 green = random.randint(-100, 255)
@@ -214,9 +230,9 @@ class HomeNetwork(object):
     @staticmethod
     def hasync():
         """ Sync HA data """
-        
+
         cinfo = Utility.read_configuration(configfile="haconf.yml", config="HACREDS")
-        
+
         Utility.hostname()
 
         #----------------------------------------------#
@@ -225,10 +241,11 @@ class HomeNetwork(object):
         if cinfo["host"].split('.')[0] == Utility.hostname():
             return
 
+        cinfo["cnopts"] = pysftp.CnOpts()
+        cinfo["cnopts"].hostkeys = None
+
         with pysftp.Connection(**cinfo) as sftp:
             filecfg = Utility.read_configuration(configfile="haconf.yml", config="FILETX")
 
             with sftp.cd(filecfg["parentdir"]):
                 sftp.put(filecfg["send"]["local"], filecfg["send"]["remote"], preserve_mtime=True)
-
-

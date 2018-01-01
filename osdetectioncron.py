@@ -79,6 +79,9 @@ def osdetection():
     for hostname in HomeNetwork.get_allhosts():
         ipaddr.append((HomeNetwork.get_hostname_specificdata(hostname, 'ip'), hostname))
 
+    if not ipaddr:
+        return
+
     pool = Pool(processes=len(ipaddr))
     results = pool.map(oshandler, ipaddr)
     pool.close()

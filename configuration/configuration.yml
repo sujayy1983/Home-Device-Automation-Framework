@@ -20,8 +20,8 @@ APPLICATION:
     - 'mp3'
 
 CACHEPERMS:
-  user: 'pi'
-  group: 'pi'
+  user: 'srsrinivas'
+  group: 'admin'
 
 DEVICEDETECT:
   devicedb: 'cache/devices.db'
