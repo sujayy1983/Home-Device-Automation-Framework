@@ -228,7 +228,7 @@ def voicehtml5(mp3=None):
     """ Voice via html5 """
 
     doorbell = glob("mp3/*")
-    doorbell = [bell.replace("mp3/", "") for bell in doorbell]
+    doorbell = sorted([bell.replace("mp3/", "") for bell in doorbell])
 
     if mp3:
         mp3song = 'mp3/{}'.format(mp3)
@@ -263,4 +263,4 @@ if __name__ == '__main__':
         alternateport = 5000
         print("Starting on {0}".format(alternateport))
         application.run(host="0.0.0.0", port=alternateport,\
-            processes=appcfg['processes'])
+            processes=appcfg["processes"])
