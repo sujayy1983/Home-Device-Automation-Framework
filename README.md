@@ -1,7 +1,7 @@
 ```
 Author: Sujayyendhiren Ramarao
 
-Description: Home network automation micro web framework.
+Description: Automate, discover and connect to your devices in Home Wifi network with this micro web app.
 ```
 
 ### What does this micro app offer ?
@@ -28,8 +28,12 @@ Description: Home network automation micro web framework.
 sudo apt-get install -y alsa-utils  mpg321 lame
 sudo modprobe snd_bcm2835
 ```
+![Wifi based doorbell](/static/img/samplewifidoorbell.png)
 
-6. Initial analysis of Kaggle labelled datasets
+6. Enable a service on the server. On my Raspberry Pi 3 I have AIY Google voicekit setup. The service is enabled or disable via this app.
+![Google AIY service control](/static/img/sampleaiy.png)
+
+7. Initial analysis of Kaggle labelled datasets
    This tells us maximum occurrences per column
    Step1: Upload a csv dataset using upload options.
    Step2: Select a dataset and select top occurrence count in rows.
@@ -41,82 +45,25 @@ sudo modprobe snd_bcm2835
 2. Flask + jinja2 + html + bootstrap + D3js + nmap + scapy
 
 
-### Configuring this micro app
-  - Add more configurable parameters in configuration/configuration.yml
-  - As we add more features we will cache data into the directory cache/*.cache
-  - If we are interested in running this app in two of the raspberry pis at home and make device detection more
-      reliable then there is an evolving feature that can sync device detection from across secondary devices via sftp.
-      for setting that feature create a file "configuration/haconf.yml" and fill in username and password of primary 
-      Raspberry pi.
-
-### Install and run this application
-
-##### Install dependencies on MAC
-
-```
-    Open Terminal
-    pip3 install -r requirements.txt
-    brew install libdnet nmap
-```
-
-##### Install dependencies on Raspberry Pi - 3
-```
-    Open Terminal
-    sudo apt-get install python3-pandas libdnet nmap libssl-dev
-    sudo pip3 install -r requirements.txt
-```
-
-##### Running the application
-Run backgroud job that caches device information and that requires 
-privileged permissions
-```
-    sudo python3 osdetectioncron.py
-```
-
-Run flask server
-```
-    python3 homeautomation.py
-```
-
-### Start home automation as a service on bootup - Debian
-
-##### Systemd configuration
-
-Please specify a user in the following 'systemd' config as it is not a 
-good practice to provide elevated privileges. Only reason for giving
-elevated privilege is to run OS scanning/detection. If we are not much
-interested in that feature then we do not need higher privileges.
-
-```
-[Unit]
-Description=My Home Network automation
-After=network.target
-
-[Service]
-Type=simple
-WorkingDirectory=<Your working directory>
-ExecStart=/usr/bin/python3 homeautomation.py
-Restart=on-abort
-
-[Install]
-WantedBy=multi-user.target
-```
+### Installation 
+Please refer INSTALL.md
 
 ### Future plans
-1. More organized and modular code with more improvements
-2. More home automation devices shall be integrated here
+1. Code needs to be object oriented.
+2. More home automation devices shall be integrated here.
 3. Voice activated controls (Leveraging google assistant) 
-   or integration with AIY Google kit
-4. More detailed analysis of Kaggle datasets
-5. Release unittest options. For now it is evolving
+   or integration with AIY Google kit.
+4. Kaggle analysis is in early stages. Need to add more punch to it.
+5. Release unittest options. For now it is evolving.
+6. Plan to proximity detection.
+7. Intrusion of new device should raise doorbell like alarm.
 
 
 ### Issues
-- Container network and home network are different so issue discovering in
-  containerized version
+- Container network and home network are different please do not build docker image yet.
 - No logging in the initial commit
 - Improvements in REST abstraction 
-- Code assumes that ip address ending with '.1' is Gateway
+- Code assumes that ip address ending with '.1' is Gateway. In the next version default gateway from netstat -r shall be picked.
 
 
 ### Docker implementation
@@ -133,4 +80,4 @@ docker run -d --name="HomeAutomation" -p 5000:5000 sujayy1983/homeautomation
 
 ### Report issues and suggestions
 - Contact: sujayy1983@gmail.com
-- Author: Sujay
+- Author: Sujayyendhiren Ramarao (Sujay)
