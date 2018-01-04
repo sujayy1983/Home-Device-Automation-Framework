@@ -3,6 +3,7 @@ Author: Sujayyendhiren Ramarao Srinivasamurthi
 Description: Reusable utilities across modules are placed here
 """
 
+import os
 import json
 from glob import glob
 from socket import gethostname
@@ -39,10 +40,12 @@ class Utility(object):
         filepath = "cache/{0}-{1}.cache".format(filename, hostname)
 
         if action == "read":
-            for filepath in glob("cache/{0}-*.cache".format(filename)):
-                print(filepath)
-                with open(filepath, 'r') as cache:
-                    return json.loads(cache.read())
+            if not os.path.exists(filepath):
+                with open(filepath, 'w') as cache:
+                    cache.write(json.dumps({}))
+      
+            with open(filepath, 'r') as cache:
+                return json.loads(cache.read())
 
         elif action == "write":
             with open(filepath, 'w') as cache:

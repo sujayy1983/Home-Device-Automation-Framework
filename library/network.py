@@ -80,7 +80,8 @@ class HomeNetwork(object):
                 hadbdata = []
 
             for entry in dbdata + hadbdata:
-                easylkup[entry['hostname'].lower()] = entry
+                entry['hostname'] = entry['hostname'].lower()
+                easylkup[entry['hostname']] = entry
 
             dfdata = []
             for hostname in rowinfo:
@@ -98,7 +99,7 @@ class HomeNetwork(object):
             # Devices not discovered this time #
             #----------------------------------#
             for hostname in easylkup:
-                rowinfo[hostname]['status'] = 'Device not discovered'
+                easylkup[hostname]['status'] = 'Device unavailable'
                 dfdata.append(easylkup[hostname])
 
             dataframe = pandas.DataFrame(dfdata)
@@ -163,8 +164,8 @@ class HomeNetwork(object):
 
             mac = alive[idx][1].hwsrc
             ipaddr = alive[idx][1].psrc
-            xcoord = random.randint(0, 2*basex)
-            ycoord = random.randint(0, 2*basey)
+            xcoord = random.randint(0, basex)
+            ycoord = random.randint(0, basey)
 
             newstruct[hostname]['ip'] = ipaddr
             newstruct[hostname]['mac'] = mac
@@ -176,8 +177,8 @@ class HomeNetwork(object):
                 newstruct[hostname]['gateway'] = "N"
             else:
                 newstruct[hostname]['gateway'] = "Y"
-                newstruct[hostname]['x'] = 0
-                newstruct[hostname]['y'] = 0
+                newstruct[hostname]['x'] = basex + 50
+                newstruct[hostname]['y'] = basey + 50
 
 
         #---------------------------------#
@@ -197,25 +198,26 @@ class HomeNetwork(object):
         devices["nodes"] = json.loads(jsdata)
 
         for anode in devices["nodes"]:
-            if anode["gateway"] == "Y":
-                gateway = anode["ip"]
-                anode["color"] = "red"
-                continue
 
-            if "osvendor" in anode and anode["osvendor"] not in colors:
+            if "osfamily" in anode and anode["osfamily"] not in colors:
                 red = 0
                 green = random.randint(-100, 255)
                 blue = random.randint(-25, 236)
-                colors[anode["osvendor"]] = "rgb({}, {}, {})".format(red, green, blue)
+                colors[str(anode["osfamily"])] = "rgb({}, {}, {})".format(red, green, blue)
 
-            elif "osvendor" not in anode:
-                anode["osvendor"] = "default"
+            elif "osfamily" not in anode:
+                anode["osvendor"] = "None"
                 red = 0
                 green = random.randint(0, 2200)
                 blue = random.randint(0, 9600)%255
-                colors[anode["osvendor"]] = "rgb({}, {}, {})".format(red, green, blue)
+                colors[anode["osfamily"]] = "rgb({}, {}, {})".format(red, green, blue)
 
-            anode["color"] = colors[anode["osvendor"]]
+            anode["color"] = colors[str(anode["osfamily"])]
+            
+            if anode["gateway"] == "Y":
+                gateway = anode["ip"]
+                continue
+
             devices["links"].append({"source":  "", "target": anode["ip"]})
 
         for link in devices["links"]:
