@@ -22,6 +22,7 @@ from library.kaggle import Kaggle
 from library.philips import Philips
 from library.Utility import Utility
 from library.network import HomeNetwork
+from library.security import Security
 
 UPLOAD_FOLDER = 'datasets'
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -212,6 +213,16 @@ def aiycontrols(service=None, action=None):
 
     return googlekit(msg)
 
+@application.route('/traceroute')
+def traceroute():
+    """ Discover home network """
+
+    timestamp = str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
+    filename = "traceroute-{}.json".format(timestamp)
+    jsonfile = "static/data/{0}".format(filename)
+
+    Security.generate_results('www.facebook.com', filename=jsonfile)
+    return render_template('d3homedevices.html', h2header="Traceroute", jsonfile=jsonfile)
 
 @application.route('/d3display')
 def d3display():
@@ -220,7 +231,7 @@ def d3display():
     filename = "networkdata-{}.json".format(timestamp)
     jsonfile = "/static/data/{0}".format(filename)
     HomeNetwork.create_d3json(jsonfile=jsonfile)
-    return render_template('d3homedevices.html', jsonfile=jsonfile)
+    return render_template('d3homedevices.html', h2header="Home Network - Discovery", jsonfile=jsonfile)
 
 @application.route('/doorbell')
 @application.route('/doorbell/<mp3>', methods=['GET', "POST"])
@@ -228,7 +239,7 @@ def voicehtml5(mp3=None):
     """ Voice via html5 """
 
     doorbell = glob("mp3/*")
-    doorbell = [bell.replace("mp3/", "") for bell in doorbell]
+    doorbell = sorted([bell.replace("mp3/", "") for bell in doorbell])
 
     if mp3:
         mp3song = 'mp3/{}'.format(mp3)
@@ -263,4 +274,4 @@ if __name__ == '__main__':
         alternateport = 5000
         print("Starting on {0}".format(alternateport))
         application.run(host="0.0.0.0", port=alternateport,\
-            processes=appcfg['processes'])
+            processes=appcfg["processes"])
