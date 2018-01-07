@@ -72,7 +72,7 @@ class Security(object):
 
             color = "rgb({}, {}, {})".format(50, 150, 255) 
 
-            if idx+1 == len(results):
+            if ttl == len(results)-1:
                 color = "rgb({}, {}, {})".format(100, 100, 100) 
                 hostname = targethostname
 
@@ -102,13 +102,17 @@ class Security(object):
 
             group = ttl%3 + 1
         
-            if idx+1 == len(results):
-                group = 1
+            hostname = nxthop
 
-            retresults['nodes'].append({"id": str(ttl), "hostname": nxthop, "ip": nxthop, "group": str(group), "hostname": nxthop})
+            if ttl == len(results):
+                group = 1 
+                hostname = targethostname
+
+            retresults['nodes'].append({"id": str(ttl), "hostname": hostname, "ip": nxthop, "group": str(group)})
 
             retresults['links1'].append({"id": str(idx), "source": srcid, "target": str(ttl)})
-            srcid = str(idx)
+
+            srcid = str(ttl)
 
         with open(filename, 'w') as fd:
             fd.write(json.dumps(retresults, indent=4))

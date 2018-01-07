@@ -1,7 +1,7 @@
 ```
 Author: Sujayyendhiren Ramarao
 
-Description: Automate all the devices in your REST API based home network devices. 
+Description: Automate all the REST API based home network devices. 
     
             Key features of this micro web app:
              (i) Keeps learning all the devices in home network and their OS properties (If a device is hardened then OS info maynot be populated).
@@ -9,7 +9,6 @@ Description: Automate all the devices in your REST API based home network device
                  devices are represented in same color. This is a good of turning of Wifi on devices that do not need to be on the network.
              (ii) Discovered device IPs are automatically picked for Phillips Hue and Bose soundtouch based on keyword matches of those device hostnames.
              (iii) This App can be leveraged as Wireless doorbell. We are free to add any mp3 (one or more) of our choice to play as a doorbell. If we open this app on our handheld device (when we are in home network Wifi range) we are free to click one of the doorbell options. 
-             (iv) 
 
 Note: Please refer INSTALL.md for installation details on Raspberry Pi3. This implementation is tested for python 3.x. 
       It should ideally work for 2.7.x as well. In case of issues please do email me (sujayy1983@gmail.com).
