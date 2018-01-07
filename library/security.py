@@ -112,7 +112,3 @@ class Security(object):
 
         with open(filename, 'w') as fd:
             fd.write(json.dumps(retresults, indent=4))
-
-if __name__ == '__main__':
-    """ Traceroute entry point """
-    Security.generate_results('www.facebook.com', "../static/data/traceroute.json")
