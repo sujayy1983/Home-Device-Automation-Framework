@@ -22,6 +22,7 @@ from library.kaggle import Kaggle
 from library.philips import Philips
 from library.Utility import Utility
 from library.network import HomeNetwork
+from library.security import Security
 
 UPLOAD_FOLDER = 'datasets'
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -212,6 +213,17 @@ def aiycontrols(service=None, action=None):
 
     return googlekit(msg)
 
+@application.route('/traceroute')
+def traceroute():
+    """ Discover home network """
+
+    timestamp = str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
+    filename = "traceroute-{}.json".format(timestamp)
+    jsonfile = "static/data/{0}".format(filename)
+
+    #Security.generate_results('www.facebook.com', filename=jsonfile)
+    Security.test_results('www.facebook.com', filename=jsonfile)
+    return render_template('networklayout.html', newlayout=jsonfile)
 
 @application.route('/d3display')
 def d3display():
@@ -220,7 +232,7 @@ def d3display():
     filename = "networkdata-{}.json".format(timestamp)
     jsonfile = "/static/data/{0}".format(filename)
     HomeNetwork.create_d3json(jsonfile=jsonfile)
-    return render_template('d3homedevices.html', jsonfile=jsonfile)
+    return render_template('d3homedevices.html', h2header="Home Network - Discovery", jsonfile=jsonfile)
 
 @application.route('/doorbell')
 @application.route('/doorbell/<mp3>', methods=['GET', "POST"])
