@@ -27,10 +27,7 @@ class Security(object):
             # --------------------------------- #
             #  Send the packet and get a reply  #
             # --------------------------------- #
-            reply = scapy.sr1(pkt, verbose=0)
-
-            if ttl == 1:
-                print(dir(reply))
+            reply = scapy.sr1(pkt, timeout=5, inter=0.05, verbose=0)
 
             if reply is None:
                 print("Exiting as no reply ... ")
@@ -39,11 +36,11 @@ class Security(object):
 
             elif reply.type == 3:
                 print("Done {} hops away: {} {} {}".format(ttl, reply.src, reply.type, reply.time))
-                results.append((ttl, reply.src, reply.time, reply.type))
+                #results.append((ttl, reply.src, reply.time, reply.type))
                 break
 
             else:
-                print("{} hops away {} {} {}".format(ttl, reply.src, reply.type, reply.time))
+                #print("{} hops away {} {} {}".format(ttl, reply.src, reply.type, reply.time))
                 results.append((ttl, reply.src, reply.time, reply.type))
 
         return results
