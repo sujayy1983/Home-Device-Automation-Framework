@@ -52,7 +52,7 @@ Note: Please refer INSTALL.md for installation details on Raspberry Pi3. This im
    Note: Few entries are intentionally removed for security reasons.
    ![OS detection of home devices](/static/img/sampleosdetect.png)
 
-5. Assuming that the app is running on a Raspberry Pi and is running 24*7. You'll need to configure audio in case it isnt configured yet. This app has an option 'Wifi Door bell', to make good use of it our handheld should be in the Home WiFi range and a few mp3s must be placed in the mp3 directory created within this repo. The directory 'mp3' is created once we run this app or we can create it manually before starting the app.
+5. Virtual door bell. Assuming that the app is running on a Raspberry Pi and is running 24*7. You'll need to add speaker and add a couple of mp3 files. This app has an option called 'Virtual Door bell'. Virtual door bell can be played from any handheld device. When a handheld device is in Home WiFi range, we can inform a person at home by clicking on one of the buttons(mp3 files). The directory 'mp3' is created once we run this app or we can create it manually before starting the app. All the mp3 files placed in 'mp3' directory are listed in the "Wifi Door bell" webpage as clickable buttons.
 
 ```
 sudo apt-get install -y alsa-utils  mpg321 lame
