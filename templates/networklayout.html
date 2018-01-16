@@ -1,7 +1,11 @@
-<!DOCTYPE html>
-<html>
-<meta charset="UTF-8">
-<style>
+{% extends "basetemplate.html" %}
+
+{% block title %}Traceroute to internet{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="/static/css/traceroute.css" />
+  <style>
 /*	style definitions	*/
 button {
   position: absolute;
@@ -46,6 +50,13 @@ button {
     pointer-events: none;
   }
 </style>
+{% endblock %}
+
+{% block content %}
+<font color="white">
+    <h2>Traceroute to internet</h2>
+</font>
+
 <button type="button" class="filter-btn" id="blue" value="1">Filter Blue</button>
 <button type="button" class="filter-btn" id="orange" value="2">Filter Orange</button>
 <button type="button" class="filter-btn" id="green" value="3">Filter Green</button>
@@ -257,3 +268,4 @@ function filter() {
 }
 
 </script>
+{% endblock %}

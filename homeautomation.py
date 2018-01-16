@@ -7,13 +7,15 @@
 """
 
 import os
+import time
 import json
 import traceback
+import subprocess
 from glob import glob
 from datetime import datetime
 
 import flask
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 from werkzeug.utils import secure_filename
 
 from library.aiy  import Aiy
@@ -248,6 +250,24 @@ def voicehtml5(mp3=None):
 
     return render_template('doorbell.html', doorbell=doorbell)
 
+@application.route('/osupdate', methods=['GET', "POST"])
+def osupdate():
+    """ os updates """
+    import io
+
+    def inner():
+        proc = subprocess.Popen(
+            ["python3 osdetectioncron.py"],          #call something with a lot of output so we can see it
+            shell=True,
+            stdout=subprocess.PIPE
+        )
+
+        for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):
+            print(line)
+            time.sleep(0.5)                           # Don't need this just shows the text streaming
+            yield line.rstrip() + '<br/>\n'
+
+    return flask.Response(inner(), mimetype='text/html')
 
 @application.route('/')
 def welcome():

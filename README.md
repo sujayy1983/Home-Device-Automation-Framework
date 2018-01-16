@@ -65,7 +65,11 @@ sudo modprobe snd_bcm2835
 
 ![Google AIY service control](/static/img/sampleaiy.png)
 
-7. Initial analysis of Kaggle labelled datasets
+7. Check internet connectivity.
+
+![Traceroute](/static/img/traceroute.png)
+
+8. Initial analysis of Kaggle labelled datasets
    This tells us maximum occurrences per column
    - Upload a csv dataset using upload options.
    - Select a dataset and select top occurrence count in rows.
@@ -94,6 +98,7 @@ Please refer INSTALL.md
 - No logging in the initial commit
 - Improvements in REST abstraction 
 - Code assumes that ip address ending with '.1' is Gateway. In the next version default gateway from netstat -r shall be picked.
+- Traceroute failure case needs to be differentiated if it is failure to reach the destination vs internet connectivity issue.
 
 
 ### Docker implementation
