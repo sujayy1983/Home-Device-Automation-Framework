@@ -7,6 +7,7 @@
 """
 
 import os
+import io
 import time
 import json
 import traceback
@@ -253,21 +254,25 @@ def voicehtml5(mp3=None):
 @application.route('/osupdate', methods=['GET', "POST"])
 def osupdate():
     """ os updates """
-    import io
-
     def inner():
         proc = subprocess.Popen(
-            ["python3 osdetectioncron.py"],          #call something with a lot of output so we can see it
+            ["python3 osdetectioncron.py"],
             shell=True,
             stdout=subprocess.PIPE
         )
 
         for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):
             print(line)
-            time.sleep(0.5)                           # Don't need this just shows the text streaming
+            time.sleep(0.5)
             yield line.rstrip() + '<br/>\n'
 
     return flask.Response(inner(), mimetype='text/html')
+
+@application.route('/diagnostics/<option>')
+def disgnostics(option):
+    """ Diagnostics calls are processed here """
+    command, results = Utility.diagnostics(option)
+    return render_template('diagnostics.html', command=command, results=results)
 
 @application.route('/')
 def welcome():

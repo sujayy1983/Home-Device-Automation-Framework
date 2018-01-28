@@ -4,7 +4,9 @@ Description: Reusable utilities across modules are placed here
 """
 
 import os
+import io
 import json
+import subprocess
 from glob import glob
 from socket import gethostname
 
@@ -81,4 +83,29 @@ class Utility(object):
         print(response.text)
 
         return True
+
+    @staticmethod
+    def diagnostics(option):
+        
+        count = 0; data = ''; supportedopts = { "filetimestamp": "ls -lrt",
+                          "viewcache": "ls cache/*",
+                          "gitstatus": "git status",
+                        }
+        
+        if option not in supportedopts: return None, None
+
+        popen = subprocess.Popen(supportedopts[option], stdout=subprocess.PIPE, shell=True, bufsize=1)
+
+        for idx, line in enumerate(io.TextIOWrapper(popen.stdout, encoding="utf-8")):
+            if not line:
+                count +=1 
+                if count > 5: break
+            else:
+                count = 0
+                data += line
+        return supportedopts[option], data
+
+    
+        
+            
 
